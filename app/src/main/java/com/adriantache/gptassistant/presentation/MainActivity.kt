@@ -14,9 +14,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.adriantache.gptassistant.data.Repository
 import com.adriantache.gptassistant.presentation.view.InputRow
@@ -33,9 +36,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             val coroutineScope = rememberCoroutineScope()
-            val context = LocalContext.current
             val scrollState = rememberScrollState()
 
             var output by remember { mutableStateOf("") }
@@ -56,7 +59,11 @@ class MainActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         item {
-                            InputRow(isLoading, ::stopTTS) { input, fromSpeech ->
+                            InputRow(
+                                isLoading = isLoading,
+                                stopTts = ::stopTts,
+                                isTtsSpeaking = tts.isTtsSpeaking,
+                            ) { input, fromSpeech ->
                                 coroutineScope.launch {
                                     if (input.isEmpty()) {
                                         output = "Please enter something!"
@@ -99,7 +106,7 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 
-    private fun stopTTS() {
+    private fun stopTts() {
         tts.stop()
     }
 }
