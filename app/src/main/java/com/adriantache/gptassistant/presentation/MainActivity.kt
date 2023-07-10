@@ -34,6 +34,18 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var tts: TTS
 
+    override fun onResume() {
+        super.onResume()
+
+        tts = TTS(this)
+    }
+
+    override fun onDestroy() {
+        tts.destroy()
+
+        super.onDestroy()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -92,18 +104,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        tts = TTS(this)
-    }
-
-    override fun onDestroy() {
-        tts.destroy()
-
-        super.onDestroy()
     }
 
     private fun stopTts() {

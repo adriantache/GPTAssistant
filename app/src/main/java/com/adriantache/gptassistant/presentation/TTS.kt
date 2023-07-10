@@ -15,11 +15,11 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 class TTS(context: Context) {
-    private var tts = getTTS(context)
+    private var tts = getTts(context)
 
     val isTtsSpeaking = MutableStateFlow(false)
 
-    private fun getTTS(context: Context): TextToSpeech {
+    private fun getTts(context: Context): TextToSpeech {
         return TextToSpeech(context) { status ->
             if (status != SUCCESS) {
                 Log.e("TTS", "Initialization Failed!")
