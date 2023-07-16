@@ -7,6 +7,7 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -100,7 +101,11 @@ fun MicrophoneInput(
                 .onGloballyPositioned {
                     canvasWidth = it.size.width
                     canvasHeight = it.size.height
-                }) {
+                }.clickable {
+                    recognizer.stopListening()
+                    isListening = false
+                }
+            ) {
                 val width = canvasWidth.toFloat()
                 val height = canvasHeight.toFloat()
                 val heightUnit = height / 5
