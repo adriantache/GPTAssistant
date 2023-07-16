@@ -3,17 +3,21 @@ package com.adriantache.gptassistant.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +50,7 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,8 +58,8 @@ class MainActivity : ComponentActivity() {
             val coroutineScope = rememberCoroutineScope()
             val scrollState = rememberScrollState()
 
-            var output by remember { mutableStateOf("") }
-            var isLoading by remember { mutableStateOf(false) }
+            var output: String? by remember { mutableStateOf(null) }
+            var isLoading: Boolean by remember { mutableStateOf(false) }
 
             KeepScreenOn(isLoading)
 
@@ -82,23 +87,34 @@ class MainActivity : ComponentActivity() {
                                         return@launch
                                     }
 
-                                    output = ""
+                                    output = null
                                     isLoading = true
                                     output = repository.getReply(input)
                                     isLoading = false
 
                                     if (fromSpeech) {
-                                        tts.speak(output)
+                                        tts.speak(output.orEmpty())
                                     }
                                 }
                             }
                         }
 
                         item {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                text = output,
-                            )
+                            if (output != null) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.primary, TextFieldDefaults.outlinedShape)
+                                        .padding(8.dp),
+                                ) {
+                                    Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        text = output.orEmpty(),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
                         }
                     }
                 }

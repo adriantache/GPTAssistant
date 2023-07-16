@@ -49,7 +49,10 @@ fun MicrophoneInput(
                 isListening = false
             }
 
-            override fun onError(error: Int) = Unit
+            override fun onError(error: Int) {
+                isListening = false
+            }
+
             override fun onPartialResults(partialResults: Bundle?) = Unit
             override fun onEvent(eventType: Int, params: Bundle?) = Unit
 
