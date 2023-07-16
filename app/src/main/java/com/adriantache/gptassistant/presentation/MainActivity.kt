@@ -23,7 +23,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import com.adriantache.gptassistant.data.Repository
 import com.adriantache.gptassistant.presentation.view.InputRow
@@ -50,13 +52,14 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             val coroutineScope = rememberCoroutineScope()
             val scrollState = rememberScrollState()
+            val keyboard = LocalSoftwareKeyboardController.current
 
             var output: String? by remember { mutableStateOf(null) }
             var isLoading: Boolean by remember { mutableStateOf(false) }
@@ -88,6 +91,7 @@ class MainActivity : ComponentActivity() {
                                     }
 
                                     output = null
+                                    keyboard?.hide()
                                     isLoading = true
                                     output = repository.getReply(input)
                                     isLoading = false
