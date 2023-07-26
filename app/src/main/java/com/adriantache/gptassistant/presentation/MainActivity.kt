@@ -1,5 +1,8 @@
 package com.adriantache.gptassistant.presentation
 
+import android.media.AudioFocusRequest
+import android.media.AudioManager
+import android.media.AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +21,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,11 +44,14 @@ class MainActivity : ComponentActivity() {
     private val repository by lazy { Repository() }
 
     private lateinit var tts: TTS
+    private lateinit var audioManager: AudioManager
+    private val audioFocusRequest = AudioFocusRequest.Builder(AUDIOFOCUS_GAIN_TRANSIENT).build()
 
     override fun onResume() {
         super.onResume()
 
         tts = TTS(this)
+        audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
     }
 
     override fun onDestroy() {
@@ -64,7 +72,15 @@ class MainActivity : ComponentActivity() {
             var output: String? by remember { mutableStateOf(null) }
             var isLoading: Boolean by remember { mutableStateOf(false) }
 
+            val isTtsSpeaking by tts.isTtsSpeaking.collectAsState()
+
             KeepScreenOn(isLoading)
+
+            LaunchedEffect(isTtsSpeaking) {
+                if (!isTtsSpeaking) {
+                    audioManager.abandonAudioFocusRequest(audioFocusRequest)
+                }
+            }
 
             GPTAssistantTheme {
                 Surface(
@@ -97,6 +113,7 @@ class MainActivity : ComponentActivity() {
                                     isLoading = false
 
                                     if (fromSpeech) {
+                                        audioManager.requestAudioFocus(audioFocusRequest)
                                         tts.speak(output.orEmpty())
                                     }
                                 }
