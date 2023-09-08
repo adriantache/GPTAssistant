@@ -15,8 +15,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -61,7 +63,7 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
+    @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -72,6 +74,7 @@ class MainActivity : ComponentActivity() {
 
             var output: List<ChatMessage> by rememberSaveable { mutableStateOf(emptyList()) }
             var isLoading: Boolean by remember { mutableStateOf(false) }
+            var showResetConfirmation: Boolean by remember { mutableStateOf(false) }
 
             val isTtsSpeaking by tts.isTtsSpeaking.collectAsState()
 
@@ -127,14 +130,14 @@ class MainActivity : ComponentActivity() {
                         }
 
                         item {
-                            // TODO: add confirmation dialog
                             Button(
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
                                 shape = RoundedCornerShape(8.dp),
                                 onClick = {
-                                    output = emptyList()
-                                    repository.resetConversation()
+                                    if (output.isEmpty()) return@Button
+
+                                    showResetConfirmation = true
                                 }
                             ) {
                                 Text("Reset conversation")
@@ -143,6 +146,28 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+
+            if (showResetConfirmation)
+                AlertDialog(
+                    onDismissRequest = { showResetConfirmation = false },
+                    text = { Text("Are you sure you want to clear this conversation and start a new one?") },
+                    confirmButton = {
+                        Button(onClick = {
+                            output = emptyList()
+                            repository.resetConversation()
+                            showResetConfirmation = false
+                        }) {
+                            Text("Ok")
+                        }
+                    },
+                    dismissButton = {
+                        Button(onClick = {
+                            showResetConfirmation = false
+                        }) {
+                            Text("Cancel")
+                        }
+                    }
+                )
         }
     }
 
