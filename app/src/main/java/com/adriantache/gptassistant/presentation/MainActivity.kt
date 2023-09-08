@@ -6,6 +6,7 @@ import android.media.AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,7 +38,6 @@ import com.adriantache.gptassistant.data.model.ChatMessage
 import com.adriantache.gptassistant.presentation.view.ConversationView
 import com.adriantache.gptassistant.presentation.view.InputRow
 import com.adriantache.gptassistant.ui.theme.GPTAssistantTheme
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -61,12 +61,13 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             val coroutineScope = rememberCoroutineScope()
-            val scrollState = rememberScrollState()
+            val scrollState = rememberLazyListState()
             val keyboard = LocalSoftwareKeyboardController.current
 
             var output: List<ChatMessage> by rememberSaveable { mutableStateOf(emptyList()) }
@@ -90,11 +91,11 @@ class MainActivity : ComponentActivity() {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(all = 16.dp)
-                            .scrollable(scrollState, Orientation.Vertical),
+                            .padding(all = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
+                        state = scrollState,
                     ) {
-                        item {
+                        stickyHeader {
                             InputRow(
                                 isLoading = isLoading,
                                 stopTts = ::stopTts,
@@ -110,6 +111,8 @@ class MainActivity : ComponentActivity() {
                                     isLoading = true
                                     output = repository.getReply(input)
                                     isLoading = false
+
+                                    scrollState.animateScrollToItem(output.size - 1)
 
                                     if (fromSpeech) {
                                         audioManager.requestAudioFocus(audioFocusRequest)

@@ -1,6 +1,7 @@
 package com.adriantache.gptassistant.presentation.view
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
@@ -36,6 +37,7 @@ fun MicrophoneInputDisplay(
             canvasWidth = it.size.width
             canvasHeight = it.size.height
         }
+        .background(Color.White)
     ) {
         val width = canvasWidth.toFloat()
         val height = canvasHeight.toFloat()
