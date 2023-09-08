@@ -13,27 +13,33 @@ class Repository {
 
     private var conversation = emptyList<ChatMessage>()
 
-    suspend fun getReply(input: String): String {
+    suspend fun getReply(input: String): List<ChatMessage> {
         conversation += ChatMessage(input)
 
         val response = try {
             service.getCompletions(OpenAiRequest(messages = conversation))
         } catch (e: Exception) {
-            if (e is SocketTimeoutException) return "Timeout."
+            if (e is SocketTimeoutException) return "Timeout.".toError()
 
-            return e.toString()
+            return e.toString().toError()
         }
 
         return if (response.isSuccessful) {
             val answer = response.body()?.choices?.lastOrNull()?.message?.content.orEmpty()
             conversation += ChatMessage(answer, ChatRole.assistant)
-            answer
+            conversation
         } else {
-            "ERROR ${response.errorBody()?.string()}"
+            "ERROR ${response.errorBody()?.string()}".toError()
         }
     }
 
     fun resetConversation() {
         conversation = emptyList()
+    }
+
+    companion object {
+        fun String.toError(): List<ChatMessage> {
+            return listOf(ChatMessage(this))
+        }
     }
 }

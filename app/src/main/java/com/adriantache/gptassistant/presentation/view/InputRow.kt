@@ -65,7 +65,7 @@ fun InputRow(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 if (isLoading) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(strokeWidth = 2.dp)
                 } else if (isSpeaking) {
                     IconButton(onClick = stopTts) {
                         Icon(

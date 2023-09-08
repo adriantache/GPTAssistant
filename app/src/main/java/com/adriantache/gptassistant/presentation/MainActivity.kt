@@ -6,20 +6,17 @@ import android.media.AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
@@ -28,13 +25,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import com.adriantache.gptassistant.data.Repository
+import com.adriantache.gptassistant.data.Repository.Companion.toError
+import com.adriantache.gptassistant.data.model.ChatMessage
+import com.adriantache.gptassistant.presentation.view.ConversationView
 import com.adriantache.gptassistant.presentation.view.InputRow
 import com.adriantache.gptassistant.ui.theme.GPTAssistantTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -66,7 +69,7 @@ class MainActivity : ComponentActivity() {
             val scrollState = rememberScrollState()
             val keyboard = LocalSoftwareKeyboardController.current
 
-            var output: String? by remember { mutableStateOf(null) }
+            var output: List<ChatMessage> by rememberSaveable { mutableStateOf(emptyList()) }
             var isLoading: Boolean by remember { mutableStateOf(false) }
 
             val isTtsSpeaking by tts.isTtsSpeaking.collectAsState()
@@ -99,11 +102,10 @@ class MainActivity : ComponentActivity() {
                             ) { input, fromSpeech ->
                                 coroutineScope.launch {
                                     if (input.isEmpty()) {
-                                        output = "Please enter something!"
+                                        output = "Please enter something!".toError()
                                         return@launch
                                     }
 
-                                    output = null
                                     keyboard?.hide()
                                     isLoading = true
                                     output = repository.getReply(input)
@@ -111,36 +113,26 @@ class MainActivity : ComponentActivity() {
 
                                     if (fromSpeech) {
                                         audioManager.requestAudioFocus(audioFocusRequest)
-                                        tts.speak(output.orEmpty())
+                                        tts.speak(output.lastOrNull()?.content.orEmpty())
                                     }
                                 }
                             }
                         }
 
-                        item {
-                            if (output != null) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.primary, OutlinedTextFieldDefaults.shape)
-                                        .padding(8.dp),
-                                ) {
-                                    Text(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        text = output.orEmpty(),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                }
-                            }
+                        items(output) {
+                            ConversationView(it)
                         }
 
                         item {
                             // TODO: add confirmation dialog
                             Button(
                                 modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
                                 shape = RoundedCornerShape(8.dp),
-                                onClick = { repository.resetConversation() }
+                                onClick = {
+                                    output = emptyList()
+                                    repository.resetConversation()
+                                }
                             ) {
                                 Text("Reset conversation")
                             }
