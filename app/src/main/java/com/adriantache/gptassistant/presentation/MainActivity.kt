@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
@@ -130,6 +132,17 @@ class MainActivity : ComponentActivity() {
                                         color = MaterialTheme.colorScheme.onPrimary,
                                     )
                                 }
+                            }
+                        }
+
+                        item {
+                            // TODO: add confirmation dialog
+                            Button(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(8.dp),
+                                onClick = { repository.resetConversation() }
+                            ) {
+                                Text("Reset conversation")
                             }
                         }
                     }
