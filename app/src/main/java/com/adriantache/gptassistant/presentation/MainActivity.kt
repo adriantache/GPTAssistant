@@ -35,9 +35,6 @@ import com.adriantache.gptassistant.presentation.view.InputRow
 import com.adriantache.gptassistant.ui.theme.GPTAssistantTheme
 import kotlinx.coroutines.launch
 
-
-// TODO: handle requesting microphone permission
-
 class MainActivity : ComponentActivity() {
     private val repository by lazy { Repository() }
 
