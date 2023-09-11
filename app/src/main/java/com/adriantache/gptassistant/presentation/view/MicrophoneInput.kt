@@ -29,6 +29,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MicrophoneInput(
+    isSpeaking: Boolean,
     stopTTS: () -> Unit,
     onResult: (String) -> Unit,
 ) {
@@ -86,15 +87,22 @@ fun MicrophoneInput(
     Surface(
         modifier = Modifier.size(50.dp)
     ) {
-        if (!isListening) {
-            IconButton(onClick = {
+        when {
+            isSpeaking -> IconButton(onClick = stopTTS) {
+                Icon(
+                    painterResource(id = R.drawable.baseline_voice_over_off_24),
+                    contentDescription = "Stop TTS"
+                )
+            }
+
+            !isListening -> IconButton(onClick = {
                 stopTTS()
                 recognizer.startListening(recognizerIntent)
             }) {
                 Icon(painter = painterResource(id = R.drawable.baseline_mic_24), contentDescription = null)
             }
-        } else {
-            MicrophoneInputDisplay(
+
+            else -> MicrophoneInputDisplay(
                 modifier = Modifier.clickable {
                     recognizer.stopListening()
                     isListening = false

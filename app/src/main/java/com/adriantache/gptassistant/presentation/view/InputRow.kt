@@ -48,7 +48,7 @@ fun InputRow(
             Row {
                 Spacer(Modifier.width(2.dp))
 
-                MicrophoneInput(stopTts) {
+                MicrophoneInput(isSpeaking, stopTts) {
                     input = it
 
                     keyboard?.hide()
@@ -66,13 +66,6 @@ fun InputRow(
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(strokeWidth = 2.dp)
-                } else if (isSpeaking) {
-                    IconButton(onClick = stopTts) {
-                        Icon(
-                            painterResource(id = R.drawable.baseline_voice_over_off_24),
-                            contentDescription = "Stop TTS"
-                        )
-                    }
                 } else {
                     IconButton(onClick = { onInput(input, false) }) {
                         Icon(
