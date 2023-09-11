@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -36,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.adriantache.gptassistant.data.Repository
 import com.adriantache.gptassistant.data.Repository.Companion.toError
 import com.adriantache.gptassistant.data.model.ChatMessage
+import com.adriantache.gptassistant.presentation.view.ClearConversationDialog
 import com.adriantache.gptassistant.presentation.view.ConversationView
 import com.adriantache.gptassistant.presentation.view.InputRow
 import com.adriantache.gptassistant.ui.theme.GPTAssistantTheme
@@ -70,6 +70,7 @@ class MainActivity : ComponentActivity() {
             val scrollState = rememberLazyListState()
             val keyboard = LocalSoftwareKeyboardController.current
 
+            var input by rememberSaveable { mutableStateOf("") }
             var output: List<ChatMessage> by rememberSaveable { mutableStateOf(emptyList()) }
             var isLoading: Boolean by remember { mutableStateOf(false) }
             var showResetConfirmation: Boolean by remember { mutableStateOf(false) }
@@ -98,6 +99,8 @@ class MainActivity : ComponentActivity() {
                             isLoading = isLoading,
                             stopTts = ::stopTts,
                             isTtsSpeaking = tts.isTtsSpeaking,
+                            input = input,
+                            onInput = { input = it },
                         ) { input, fromSpeech ->
                             coroutineScope.launch {
                                 if (input.isEmpty()) {
@@ -107,10 +110,12 @@ class MainActivity : ComponentActivity() {
 
                                 keyboard?.hide()
                                 isLoading = true
+
+                                output += ChatMessage(input)
                                 output = repository.getReply(input)
                                 isLoading = false
 
-                                scrollState.animateScrollToItem(output.size - 1)
+                                scrollState.animateScrollToItem((output.size - 2).coerceAtLeast(0))
 
                                 if (fromSpeech) {
                                     audioManager.requestAudioFocus(audioFocusRequest)
@@ -122,7 +127,9 @@ class MainActivity : ComponentActivity() {
                         Spacer(Modifier.height(16.dp))
 
                         LazyColumn(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                             state = scrollState,
                         ) {
@@ -148,25 +155,14 @@ class MainActivity : ComponentActivity() {
                 }
 
                 if (showResetConfirmation) {
-                    AlertDialog(
-                        onDismissRequest = { showResetConfirmation = false },
-                        text = { Text("Are you sure you want to clear this conversation and start a new one?") },
-                        confirmButton = {
-                            Button(onClick = {
-                                output = emptyList()
-                                repository.resetConversation()
-                                showResetConfirmation = false
-                            }) {
-                                Text("Ok")
-                            }
+                    ClearConversationDialog(
+                        onConfirm = {
+                            input = ""
+                            output = emptyList()
+                            repository.resetConversation()
+                            showResetConfirmation = false
                         },
-                        dismissButton = {
-                            Button(onClick = {
-                                showResetConfirmation = false
-                            }) {
-                                Text("Cancel")
-                            }
-                        }
+                        onDismiss = { showResetConfirmation = false },
                     )
                 }
             }

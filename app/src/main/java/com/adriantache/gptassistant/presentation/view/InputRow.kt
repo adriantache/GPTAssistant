@@ -15,9 +15,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -33,9 +30,10 @@ fun InputRow(
     isLoading: Boolean,
     stopTts: () -> Unit,
     isTtsSpeaking: StateFlow<Boolean>,
-    onInput: (String, fromSpeech: Boolean) -> Unit,
+    input: String,
+    onInput: (String) -> Unit,
+    onSubmit: (String, fromSpeech: Boolean) -> Unit,
 ) {
-    var input by remember { mutableStateOf("") }
     val isSpeaking by isTtsSpeaking.collectAsState()
 
     val keyboard = LocalSoftwareKeyboardController.current
@@ -43,18 +41,18 @@ fun InputRow(
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = input,
-        onValueChange = { input = it },
+        onValueChange = onInput,
         leadingIcon = {
             Row {
                 Spacer(Modifier.width(2.dp))
 
                 MicrophoneInput(isSpeaking, stopTts) {
-                    input = it
+                    onInput(it)
 
                     keyboard?.hide()
 
                     if (!isLoading) {
-                        onInput(input, true)
+                        onSubmit(it, true)
                     }
                 }
             }
@@ -67,7 +65,7 @@ fun InputRow(
                 if (isLoading) {
                     CircularProgressIndicator(strokeWidth = 2.dp)
                 } else {
-                    IconButton(onClick = { onInput(input, false) }) {
+                    IconButton(onClick = { onSubmit(input, false) }) {
                         Icon(
                             painterResource(id = R.drawable.baseline_east_24),
                             contentDescription = "Submit"
@@ -81,7 +79,7 @@ fun InputRow(
         ),
         keyboardActions = KeyboardActions(
             onDone = {
-                onInput(input, false)
+                onSubmit(input, false)
             }
         ),
     )
@@ -94,6 +92,8 @@ private fun InputRowPreview() {
         isLoading = false,
         stopTts = { },
         isTtsSpeaking = MutableStateFlow(false),
-        onInput = { _, _ -> }
+        input = "test",
+        onInput = {},
+        onSubmit = { _, _ -> },
     )
 }

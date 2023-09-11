@@ -8,6 +8,7 @@ data class ChatMessage(
     val role: ChatRole = ChatRole.user,
 )
 
+@Suppress("EnumEntryName", "Unused")
 enum class ChatRole {
     system, assistant, user
 }
