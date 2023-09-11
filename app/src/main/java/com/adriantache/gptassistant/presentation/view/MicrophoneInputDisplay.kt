@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,6 +29,7 @@ fun MicrophoneInputDisplay(
     ) {
     var canvasHeight by remember { mutableStateOf(0) }
     var canvasWidth by remember { mutableStateOf(0) }
+    val color = LocalContentColor.current
 
     Canvas(modifier = modifier
         .fillMaxSize()
@@ -47,7 +48,7 @@ fun MicrophoneInputDisplay(
         val lineEnd = heightUnit + 2 * heightUnit * amplitudePercent
 
         drawRoundRect(
-            color = Color.Black,
+            color = color,
             topLeft = Offset(width / 2 - rectWidth / 2, lineStart),
             size = Size(rectWidth, lineEnd),
             cornerRadius = CornerRadius(100f),
@@ -59,14 +60,14 @@ fun MicrophoneInputDisplay(
         val smallLineEnd = smallHeightUnit + 2 * smallHeightUnit * amplitudePercent
 
         drawRoundRect(
-            color = Color.Black,
+            color = color,
             topLeft = Offset(width / 3 - rectWidth / 2, smallLineStart),
             size = Size(rectWidth, smallLineEnd),
             cornerRadius = CornerRadius(100f),
         )
 
         drawRoundRect(
-            color = Color.Black,
+            color = color,
             topLeft = Offset(width / 3 * 2 - rectWidth / 2, smallLineStart),
             size = Size(rectWidth, smallLineEnd),
             cornerRadius = CornerRadius(100f),
