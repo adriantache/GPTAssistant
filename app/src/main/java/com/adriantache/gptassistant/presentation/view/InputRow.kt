@@ -13,8 +13,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -22,20 +20,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.adriantache.gptassistant.R
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun InputRow(
     isLoading: Boolean,
     stopTts: () -> Unit,
-    isTtsSpeaking: StateFlow<Boolean>,
+    isTtsSpeaking: Boolean,
     input: String,
-    onInput: (String) -> Unit,
-    onSubmit: (String, fromSpeech: Boolean) -> Unit,
+    onInput: (input: String) -> Unit,
+    onSubmit: (fromSpeech: Boolean) -> Unit,
 ) {
-    val isSpeaking by isTtsSpeaking.collectAsState()
-
     val keyboard = LocalSoftwareKeyboardController.current
 
     OutlinedTextField(
@@ -46,13 +40,13 @@ fun InputRow(
             Row {
                 Spacer(Modifier.width(2.dp))
 
-                MicrophoneInput(isSpeaking, stopTts) {
+                MicrophoneInput(isTtsSpeaking, stopTts) {
                     onInput(it)
 
                     keyboard?.hide()
 
                     if (!isLoading) {
-                        onSubmit(it, true)
+                        onSubmit(true)
                     }
                 }
             }
@@ -65,7 +59,7 @@ fun InputRow(
                 if (isLoading) {
                     CircularProgressIndicator(strokeWidth = 2.dp)
                 } else {
-                    IconButton(onClick = { onSubmit(input, false) }) {
+                    IconButton(onClick = { onSubmit(false) }) {
                         Icon(
                             painterResource(id = R.drawable.baseline_east_24),
                             contentDescription = "Submit"
@@ -74,14 +68,8 @@ fun InputRow(
                 }
             }
         },
-        keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Done
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                onSubmit(input, false)
-            }
-        ),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { onSubmit(false) }),
     )
 }
 
@@ -91,9 +79,9 @@ private fun InputRowPreview() {
     InputRow(
         isLoading = false,
         stopTts = { },
-        isTtsSpeaking = MutableStateFlow(false),
+        isTtsSpeaking = false,
         input = "test",
         onInput = {},
-        onSubmit = { _, _ -> },
+        onSubmit = {},
     )
 }

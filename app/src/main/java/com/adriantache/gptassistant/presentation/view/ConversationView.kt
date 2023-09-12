@@ -1,69 +1,82 @@
 package com.adriantache.gptassistant.presentation.view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.adriantache.gptassistant.R
-import com.adriantache.gptassistant.data.model.ChatMessage
-import com.adriantache.gptassistant.data.model.ChatRole
+import com.adriantache.gptassistant.domain.model.Message
 
+// TODO: extract TTS as its own component
 @Composable
 fun ConversationView(
-    chatMessage: ChatMessage,
+    isLoading: Boolean,
+    isTtsSpeaking: Boolean,
+    canResetConversation: Boolean,
+    input: String,
+    onInput: (input: String) -> Unit,
+    onSubmit: (fromSpeech: Boolean) -> Unit,
+    conversation: List<Message>,
+    stopTTS: () -> Unit,
+    onResetConversation: () -> Unit,
 ) {
-    val isUserMessage = chatMessage.role == ChatRole.user
-    val bgColor = if (isUserMessage) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
-    val textColor = if (isUserMessage) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary
-    val contentAlignment = if (isUserMessage) Arrangement.End else Arrangement.Start
+    val scrollState = rememberLazyListState()
 
-    val clipboardManager = LocalClipboardManager.current
+    LaunchedEffect(conversation) {
+        scrollState.animateScrollToItem((conversation.size - 2).coerceAtLeast(0))
+    }
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = contentAlignment,
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(all = 16.dp),
     ) {
-        Box(
+        InputRow(
+            isLoading = isLoading,
+            stopTts = stopTTS,
+            isTtsSpeaking = isTtsSpeaking,
+            input = input,
+            onInput = onInput,
+            onSubmit = onSubmit,
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        LazyColumn(
             modifier = Modifier
-                .fillMaxWidth(0.75f)
-                .background(bgColor, OutlinedTextFieldDefaults.shape)
-                .padding(8.dp),
+                .fillMaxWidth()
+                .weight(1f),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            state = scrollState,
         ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = chatMessage.content,
-                style = MaterialTheme.typography.bodyMedium,
-                color = textColor,
-            )
+            items(conversation) {
+                MessageView(it)
+            }
         }
 
-        if (!isUserMessage) {
-            Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.height(16.dp))
 
-            IconButton(
-                modifier = Modifier.requiredSize(48.dp),
-                onClick = {
-                    clipboardManager.setText(AnnotatedString(chatMessage.content))
-                }
-            ) {
-                Icon(painter = painterResource(id = R.drawable.baseline_content_copy_24), contentDescription = "Copy message")
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
+            onClick = {
+                if (!canResetConversation) return@Button
+
+                onResetConversation()
             }
+        ) {
+            Text("Reset conversation")
         }
     }
 }

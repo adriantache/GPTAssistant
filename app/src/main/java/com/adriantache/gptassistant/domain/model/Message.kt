@@ -1,0 +1,9 @@
+package com.adriantache.gptassistant.domain.model
+
+sealed class Message {
+    abstract val content: String
+
+    data class UserMessage(override val content: String) : Message()
+    data class GptMessage(override val content: String) : Message()
+    data class AdminMessage(override val content: String) : Message()
+}
