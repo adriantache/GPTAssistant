@@ -14,10 +14,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
+// TODO: implement conversation saving
 @Suppress("kotlin:S6305")
 class ConversationUseCases(
     private val repository: Repository = RepositoryImpl(),
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
     private val scope = CoroutineScope(dispatcher)
 
@@ -57,10 +58,6 @@ class ConversationUseCases(
     fun onResetConversation() {
         conversation = Conversation()
         updateState()
-    }
-
-    fun onSaveConversation() {
-        // TODO: implement
     }
 
     private fun updateState(isLoading: Boolean = false) {
