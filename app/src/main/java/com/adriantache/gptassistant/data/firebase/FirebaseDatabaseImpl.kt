@@ -25,8 +25,12 @@ class FirebaseDatabaseImpl {
         val currentDatabase = getDatabaseContents()
         val updatedContents = currentDatabase + conversation
 
-        val json = Json.encodeToString(updatedContents)
+        val json = Json.encodeToString(updatedContents.distinct())
 
         myRef.setValue(json)
+    }
+
+    suspend fun getConversations(): List<ConversationData> {
+        return getDatabaseContents()
     }
 }

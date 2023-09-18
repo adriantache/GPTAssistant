@@ -6,8 +6,6 @@ Zapp/src/main/java/com/adriantache/gptassistant/presentation/view/MicrophoneInpu
 s
 Capp/src/main/java/com/adriantache/gptassistant/domain/util/Event.kt,a\1\a1756138b8dd2c668502e46d1312c226c4eaebd3
 Ä
-Papp/src/main/java/com/adriantache/gptassistant/domain/model/ui/ConversationUi.kt,a\0\a05426d4e8d6f96f7ce9bd16d8608e9d19adcf73
-Ä
 Papp/src/androidTest/java/com/adriantache/gptassistant/ExampleInstrumentedTest.kt,d\d\dd339e85ffdbb9484f8379ee04765e22c7591fa9
 P
  app/src/main/AndroidManifest.xml,8\c\8c55c3ccc257e5907959013f99656e4c8ec3903e
@@ -17,8 +15,6 @@ Sapp/src/main/java/com/adriantache/gptassistant/presentation/view/MicrophoneInpu
 Papp/src/main/java/com/adriantache/gptassistant/domain/model/ConversationEvent.kt,1\d\1d20df911a3bf82067b531566a788191f03047d0
 Å
 Q.idea/sonarlint/securityhotspotstore/d/d/dd339e85ffdbb9484f8379ee04765e22c7591fa9,a\4\a452ffd5b5d9f0e66414320388dd9d1d9c1ac60b
-Ñ
-Tapp/src/main/java/com/adriantache/gptassistant/domain/model/data/ConversationData.kt,1\0\10f5e51c5b8f5e72e69778a6be8a6e8d7d070727
 s
 Capp/src/main/java/com/adriantache/gptassistant/data/model/Choice.kt,b\3\b370f7f33180bfb9cf5aac8361e3d9d881793e93
 {
@@ -29,8 +25,6 @@ w
 G.idea/sonarlint/issuestore/8/c/8c55c3ccc257e5907959013f99656e4c8ec3903e,3\2\32813322c99a6c8a141ab2dc12bc10af3425f1b4
 Å
 Q.idea/sonarlint/securityhotspotstore/c/2/c2f74dc0e671097391bad0ea2911469d9d47e76a,f\4\f44916dc04ad45e8e1a9c4928be3549e66909e3f
-{
-Kapp/src/main/java/com/adriantache/gptassistant/domain/model/Conversation.kt,e\a\eab4197db4c8a0105f8a39e3734b4724e02b923f
 w
 G.idea/sonarlint/issuestore/5/d/5d150153a69a448434644b58eadeeffc8642c6cc,5\1\5183c292add605a1e263e96d47a2304ba62d511a
 Å
@@ -39,8 +33,6 @@ Q.idea/sonarlint/securityhotspotstore/8/c/8c55c3ccc257e5907959013f99656e4c8ec390
 Napp/src/main/java/com/adriantache/gptassistant/data/retrofit/RetrofitHelper.kt,4\c\4c1e84e5c07d2ad4e7e786313f983c3e75574ad3
 Å
 Q.idea/sonarlint/securityhotspotstore/5/d/5d150153a69a448434644b58eadeeffc8642c6cc,6\7\6775e47425bb230fe1db099fe2f644354e3e2970
-x
-Happ/src/main/java/com/adriantache/gptassistant/domain/data/Repository.kt,1\7\175aea019f5d9e113404f1901f508825b53a911f
 Å
 Q.idea/sonarlint/securityhotspotstore/a/1/a1756138b8dd2c668502e46d1312c226c4eaebd3,c\1\c1d0ab51e776b06f2188797dec6a31a5009a215a
 v
@@ -61,7 +53,3 @@ x
 Happ/src/main/java/com/adriantache/gptassistant/data/model/ChatMessage.kt,f\6\f686eee8d558e6b47a412bf10395073df940624f
 z
 Japp/src/main/java/com/adriantache/gptassistant/data/model/OpenAiRequest.kt,e\b\eb97e327fcd068fb0b9f601fecc5acbb9fd5fe3c
-u
-Eapp/src/main/java/com/adriantache/gptassistant/data/RepositoryImpl.kt,7\2\72512a895ebe1bcb9ee333b6814c003bb19f471b
-Ñ
-Tapp/src/main/java/com/adriantache/gptassistant/data/firebase/FirebaseDatabaseImpl.kt,6\2\625b1b490c143626e951b09122b114ac9bc78029

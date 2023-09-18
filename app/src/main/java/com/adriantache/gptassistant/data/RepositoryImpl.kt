@@ -31,4 +31,8 @@ class RepositoryImpl(
     override suspend fun saveConversation(conversation: ConversationData) {
         firebaseDatabase.saveConversation(conversation = conversation)
     }
+
+    override suspend fun getConversations(): List<ConversationData> {
+        return firebaseDatabase.getConversations()
+    }
 }

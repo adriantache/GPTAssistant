@@ -16,6 +16,14 @@ sealed class MessageData {
     @Serializable
     data class AdminMessage(override val content: String) : MessageData()
 
+    fun toMessage(): Message {
+        return when (this) {
+            is AdminMessage -> Message.AdminMessage(content)
+            is GptMessage -> Message.GptMessage(content)
+            is UserMessage -> Message.UserMessage(content)
+        }
+    }
+
     companion object {
         fun Message.toData(): MessageData {
             return when (this) {

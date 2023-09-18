@@ -1,8 +1,10 @@
 package com.adriantache.gptassistant.presentation.view
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.adriantache.gptassistant.domain.model.Message
@@ -21,15 +24,16 @@ import com.adriantache.gptassistant.domain.model.Message
 // TODO: extract TTS as its own component
 @Composable
 fun ConversationView(
+    conversation: List<Message>,
     isLoading: Boolean,
     isTtsSpeaking: Boolean,
     canResetConversation: Boolean,
     input: String,
     onInput: (input: String) -> Unit,
     onSubmit: (fromSpeech: Boolean) -> Unit,
-    conversation: List<Message>,
     stopTTS: () -> Unit,
     onResetConversation: () -> Unit,
+    onLoadPreviousConversations: () -> Unit,
 ) {
     val scrollState = rememberLazyListState()
 
@@ -60,23 +64,34 @@ fun ConversationView(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             state = scrollState,
         ) {
-            items(conversation) {
-                MessageView(it)
+            if (conversation.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Button(onClick = onLoadPreviousConversations) {
+                            Text("Load previous conversations")
+                        }
+                    }
+                }
+            } else {
+                items(conversation) {
+                    MessageView(it)
+                }
             }
         }
 
-        Spacer(Modifier.height(16.dp))
+        if (canResetConversation) {
+            Spacer(Modifier.height(16.dp))
 
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            onClick = {
-                if (!canResetConversation) return@Button
-
-                onResetConversation()
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                onClick = onResetConversation
+            ) {
+                Text("Reset conversation")
             }
-        ) {
-            Text("Reset conversation")
         }
     }
 }

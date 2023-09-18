@@ -24,6 +24,7 @@ import com.adriantache.gptassistant.domain.ConversationUseCases
 import com.adriantache.gptassistant.domain.model.ConversationEvent
 import com.adriantache.gptassistant.presentation.view.ClearConversationDialog
 import com.adriantache.gptassistant.presentation.view.ConversationView
+import com.adriantache.gptassistant.presentation.view.PreviousConversationsDialog
 import com.adriantache.gptassistant.ui.theme.GPTAssistantTheme
 
 class MainActivity : ComponentActivity() {
@@ -54,6 +55,7 @@ class MainActivity : ComponentActivity() {
             val keyboard = LocalSoftwareKeyboardController.current
 
             var showResetConfirmation: Boolean by remember { mutableStateOf(false) }
+            var showPreviousConversationsDialog: Boolean by remember { mutableStateOf(false) }
             var showErrorMessage: String? by remember { mutableStateOf(null) }
 
             val isTtsSpeaking by tts.isTtsSpeaking.collectAsState()
@@ -88,6 +90,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.surface,
                 ) {
                     ConversationView(
+                        conversation = screenState.conversation,
                         isLoading = screenState.isLoading,
                         isTtsSpeaking = isTtsSpeaking,
                         input = screenState.latestInput,
@@ -101,31 +104,39 @@ class MainActivity : ComponentActivity() {
                             tts.stop()
                         },
                         canResetConversation = screenState.canResetConversation,
-                        conversation = screenState.conversation,
                         onResetConversation = { showResetConfirmation = true },
+                        onLoadPreviousConversations = { showPreviousConversationsDialog = true },
                     )
-                }
 
-                if (showResetConfirmation) {
-                    ClearConversationDialog(
-                        onConfirm = { saveConversation ->
-                            useCases.onResetConversation(saveConversation = saveConversation)
-                            showResetConfirmation = false
-                        },
-                        onDismiss = { showResetConfirmation = false },
-                    )
-                }
+                    if (showPreviousConversationsDialog) {
+                        PreviousConversationsDialog(
+                            getConversationHistory = useCases::getConversations,
+                            onLoadConversation = useCases::onLoadConversation,
+                            onDismiss = { showPreviousConversationsDialog = false }
+                        )
+                    }
 
-                if (showErrorMessage != null) {
-                    AlertDialog(
-                        text = { Text(showErrorMessage.orEmpty()) },
-                        confirmButton = {
-                            Button(onClick = { showErrorMessage = null }) {
-                                Text("Ok")
-                            }
-                        },
-                        onDismissRequest = { showErrorMessage = null },
-                    )
+                    if (showResetConfirmation) {
+                        ClearConversationDialog(
+                            onConfirm = { saveConversation ->
+                                useCases.onResetConversation(saveConversation = saveConversation)
+                                showResetConfirmation = false
+                            },
+                            onDismiss = { showResetConfirmation = false },
+                        )
+                    }
+
+                    if (showErrorMessage != null) {
+                        AlertDialog(
+                            text = { Text(showErrorMessage.orEmpty()) },
+                            confirmButton = {
+                                Button(onClick = { showErrorMessage = null }) {
+                                    Text("Ok")
+                                }
+                            },
+                            onDismissRequest = { showErrorMessage = null },
+                        )
+                    }
                 }
             }
         }

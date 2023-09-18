@@ -7,4 +7,6 @@ interface Repository {
     suspend fun getReply(conversation: ConversationData): Result<Message>
 
     suspend fun saveConversation(conversation: ConversationData)
+
+    suspend fun getConversations(): List<ConversationData>
 }

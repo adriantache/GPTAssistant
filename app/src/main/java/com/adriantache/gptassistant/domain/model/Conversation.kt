@@ -1,11 +1,11 @@
 package com.adriantache.gptassistant.domain.model
 
 data class Conversation(
+    val title: String? = null,
     val messages: List<Message> = emptyList(),
     val latestInput: String = "",
     val errorMessage: String? = null,
 ) {
-    val areMessagesVisible = messages.isNotEmpty()
     val canResetConversation = messages.isNotEmpty()
     val canSubmit = latestInput.isNotBlank()
 

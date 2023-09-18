@@ -64,10 +64,14 @@ class ConversationUseCases(
 
         scope.launch {
             if (saveConversation) {
-                val title = repository.getReply(
-                    conversation.copy(messages = conversation.messages + titleQuery).toData()
-                ).getOrNull()?.content
-                    ?: UUID.randomUUID().toString()
+                val title = if (conversation.title != null) {
+                    conversation.title
+                } else {
+                    repository.getReply(
+                        conversation.copy(messages = conversation.messages + titleQuery).toData()
+                    ).getOrNull()?.content
+                        ?: UUID.randomUUID().toString()
+                }
 
                 repository.saveConversation(conversation.toData(title))
             }
@@ -75,6 +79,15 @@ class ConversationUseCases(
             conversation = Conversation()
             updateState()
         }
+    }
+
+    fun onLoadConversation(conversation: Conversation) {
+        this.conversation = conversation
+        updateState()
+    }
+
+    suspend fun getConversations(): List<Conversation> {
+        return repository.getConversations().map { it.toConversation() }
     }
 
     private fun updateState(isLoading: Boolean = false) {

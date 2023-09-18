@@ -32,7 +32,7 @@ fun ClearConversationDialog(
 
     AlertDialog(onDismissRequest = onDismiss) {
         Column(
-            Modifier
+            modifier = Modifier
                 .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)

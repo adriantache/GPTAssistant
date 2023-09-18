@@ -8,7 +8,6 @@ data class ConversationUi(
     val conversation: List<Message>,
     val isLoading: Boolean,
     val canResetConversation: Boolean,
-    val areMessagesVisible: Boolean,
     val canSubmit: Boolean,
 ) {
     companion object {
@@ -20,7 +19,6 @@ data class ConversationUi(
                 conversation = messages,
                 isLoading = isLoading,
                 canResetConversation = canResetConversation,
-                areMessagesVisible = areMessagesVisible,
                 canSubmit = canSubmit,
             )
         }
