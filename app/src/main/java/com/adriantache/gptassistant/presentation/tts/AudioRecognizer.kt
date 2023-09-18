@@ -7,6 +7,7 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
+import com.adriantache.gptassistant.domain.util.Event
 import com.adriantache.gptassistant.presentation.tts.AudioRecognizer.RecognizerState.Failure
 import com.adriantache.gptassistant.presentation.tts.AudioRecognizer.RecognizerState.Ready
 import com.adriantache.gptassistant.presentation.tts.AudioRecognizer.RecognizerState.Recognizing
@@ -23,33 +24,30 @@ class AudioRecognizer(context: Context) {
                 updateState(Recognizing(0f))
             }
 
-            override fun onBeginningOfSpeech() = Unit
             override fun onRmsChanged(rmsdB: Float) {
                 if (state.value is Recognizing) {
                     updateState(Recognizing((rmsdB * 10).toInt() / 100f))
                 }
             }
 
-            override fun onBufferReceived(buffer: ByteArray?) = Unit
-            override fun onEndOfSpeech() {
-                updateState(Ready)
-            }
-
             override fun onError(error: Int) {
                 updateState(Failure)
             }
-
-            override fun onPartialResults(partialResults: Bundle?) = Unit
-            override fun onEvent(eventType: Int, params: Bundle?) = Unit
 
             override fun onResults(results: Bundle) {
                 val matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 val output = matches?.get(0) ?: ""
 
                 if (state.value is Recognizing) {
-                    updateState(Success(output))
+                    updateState(Success(Event(output)))
                 }
             }
+
+            override fun onBeginningOfSpeech() = Unit
+            override fun onBufferReceived(buffer: ByteArray?) = Unit
+            override fun onEndOfSpeech() = Unit
+            override fun onPartialResults(partialResults: Bundle?) = Unit
+            override fun onEvent(eventType: Int, params: Bundle?) = Unit
         })
     }
     private val recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
@@ -89,7 +87,7 @@ class AudioRecognizer(context: Context) {
     sealed interface RecognizerState {
         data object Ready : RecognizerState
         data class Recognizing(val amplitudePercent: Float) : RecognizerState
-        data class Success(val result: String) : RecognizerState
+        data class Success(val result: Event<String>) : RecognizerState
         data object Failure : RecognizerState
     }
 }

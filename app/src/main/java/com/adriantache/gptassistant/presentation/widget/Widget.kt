@@ -20,6 +20,7 @@ import com.adriantache.gptassistant.domain.ConversationUseCases
 import com.adriantache.gptassistant.domain.model.ConversationEvent
 import com.adriantache.gptassistant.presentation.tts.AudioRecognizer
 import com.adriantache.gptassistant.presentation.tts.TtsHelper
+import kotlinx.coroutines.delay
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
@@ -41,9 +42,11 @@ class Widget : GlanceAppWidget(), KoinComponent {
             LaunchedEffect(recognizerState) {
                 when (val recognizerStateValue = recognizerState) {
                     is AudioRecognizer.RecognizerState.Success -> {
-                        output = "Wait"
-                        useCases.onInput(recognizerStateValue.result)
-                        useCases.onSubmit(true)
+                        recognizerStateValue.result.value?.let {
+                            output = "Wait"
+                            useCases.onInput(it)
+                            useCases.onSubmit(true)
+                        }
                     }
 
                     else -> Unit
@@ -57,6 +60,10 @@ class Widget : GlanceAppWidget(), KoinComponent {
                         output = "Listen"
                         tts.speak(event.output).collect {
                             if (!it) {
+                                output = "Done"
+
+                                delay(1000)
+
                                 output = "GPT"
                             }
                         }

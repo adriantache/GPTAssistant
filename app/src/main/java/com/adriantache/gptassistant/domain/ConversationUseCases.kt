@@ -34,7 +34,16 @@ class ConversationUseCases(
     val state: MutableStateFlow<ConversationUi> = MutableStateFlow(conversation.toUi(false))
     val events: MutableStateFlow<Event<ConversationEvent>?> = MutableStateFlow(null)
 
-    fun onInput(input: String) {
+    fun onInput(
+        input: String,
+        fromWidget: Boolean = false,
+    ) {
+        // Automatically reset the conversation if we haven't interacted with the Widget in a while.
+        val isWidgetExpired = System.currentTimeMillis() - lastRequestTime > (3 * 60 * 1000)
+        if (fromWidget && isWidgetExpired) {
+            conversation = Conversation()
+        }
+
         conversation = conversation.onInput(input)
         updateState()
     }

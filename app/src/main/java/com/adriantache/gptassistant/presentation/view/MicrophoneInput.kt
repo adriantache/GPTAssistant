@@ -51,7 +51,8 @@ fun MicrophoneInput(
 
             is AudioRecognizer.RecognizerState.Success -> {
                 isListening = false
-                onResult(state.result)
+
+                state.result.value?.let(onResult)
             }
 
             AudioRecognizer.RecognizerState.Failure -> isListening = false

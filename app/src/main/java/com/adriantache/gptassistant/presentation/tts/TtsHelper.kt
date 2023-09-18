@@ -30,11 +30,6 @@ class TtsHelper(context: Context) {
         tts.stop()
     }
 
-    // TODO: see if necessary
-    fun onDestroy() {
-        tts.shutdown()
-    }
-
     private fun getTts(context: Context): TextToSpeech {
         return TextToSpeech(context) { status ->
             if (status != TextToSpeech.SUCCESS) {
