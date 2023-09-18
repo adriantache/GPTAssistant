@@ -32,6 +32,6 @@ data class Conversation(
     }
 
     fun onReply(reply: Message): Conversation {
-        return Conversation(messages + reply)
+        return Conversation(messages = messages + reply)
     }
 }

@@ -4,6 +4,8 @@ import com.adriantache.gptassistant.data.RepositoryImpl
 import com.adriantache.gptassistant.domain.data.Repository
 import com.adriantache.gptassistant.domain.model.Conversation
 import com.adriantache.gptassistant.domain.model.ConversationEvent
+import com.adriantache.gptassistant.domain.model.Message
+import com.adriantache.gptassistant.domain.model.data.ConversationData.Companion.toData
 import com.adriantache.gptassistant.domain.model.ui.ConversationUi
 import com.adriantache.gptassistant.domain.model.ui.ConversationUi.Companion.toUi
 import com.adriantache.gptassistant.domain.util.Event
@@ -13,8 +15,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.util.UUID
 
-// TODO: implement conversation saving
+private val titleQuery = Message.UserMessage("Suggest a title for this conversation.")
+
 @Suppress("kotlin:S6305")
 class ConversationUseCases(
     private val repository: Repository = RepositoryImpl(),
@@ -39,7 +43,7 @@ class ConversationUseCases(
         conversation = conversation.onSubmit()
 
         scope.launch {
-            repository.getReply(conversation)
+            repository.getReply(conversation.toData())
                 .onSuccess { reply ->
                     conversation = conversation.onReply(reply)
                     updateState()
@@ -55,9 +59,22 @@ class ConversationUseCases(
         }
     }
 
-    fun onResetConversation() {
-        conversation = Conversation()
-        updateState()
+    fun onResetConversation(saveConversation: Boolean) {
+        updateState(isLoading = true)
+
+        scope.launch {
+            if (saveConversation) {
+                val title = repository.getReply(
+                    conversation.copy(messages = conversation.messages + titleQuery).toData()
+                ).getOrNull()?.content
+                    ?: UUID.randomUUID().toString()
+
+                repository.saveConversation(conversation.toData(title))
+            }
+
+            conversation = Conversation()
+            updateState()
+        }
     }
 
     private fun updateState(isLoading: Boolean = false) {

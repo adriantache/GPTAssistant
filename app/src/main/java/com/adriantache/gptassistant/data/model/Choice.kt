@@ -1,11 +1,11 @@
 package com.adriantache.gptassistant.data.model
 
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class Choice(
     val message: ChatMessage,
     val text: String?,
     val index: Int?,
-    val logprobs: List<Double>?
+    val logprobs: List<Double>?,
 )

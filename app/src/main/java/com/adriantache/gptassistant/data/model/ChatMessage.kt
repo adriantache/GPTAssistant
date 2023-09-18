@@ -1,21 +1,21 @@
 package com.adriantache.gptassistant.data.model
 
-import com.adriantache.gptassistant.domain.model.Conversation
-import com.adriantache.gptassistant.domain.model.Message
-import com.squareup.moshi.JsonClass
+import com.adriantache.gptassistant.domain.model.data.ConversationData
+import com.adriantache.gptassistant.domain.model.data.MessageData
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class ChatMessage(
     val content: String,
     val role: ChatRole = ChatRole.user,
 ) {
     companion object {
-        fun Conversation.toChatMessages(): List<ChatMessage> {
+        fun ConversationData.toChatMessages(): List<ChatMessage> {
             return this.messages.map {
                 val role = when (it) {
-                    is Message.AdminMessage -> ChatRole.system
-                    is Message.GptMessage -> ChatRole.assistant
-                    is Message.UserMessage -> ChatRole.user
+                    is MessageData.AdminMessage -> ChatRole.system
+                    is MessageData.GptMessage -> ChatRole.assistant
+                    is MessageData.UserMessage -> ChatRole.user
                 }
 
                 ChatMessage(content = it.content, role = role)
@@ -24,7 +24,7 @@ data class ChatMessage(
     }
 }
 
-@Suppress("EnumEntryName", "Unused")
+@Suppress("EnumEntryName")
 enum class ChatRole {
     system, assistant, user
 }

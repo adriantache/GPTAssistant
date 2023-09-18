@@ -35,17 +35,17 @@ fun InputRow(
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = input,
+        enabled = !isLoading,
         onValueChange = onInput,
         leadingIcon = {
             Row {
                 Spacer(Modifier.width(2.dp))
 
-                MicrophoneInput(isTtsSpeaking, stopTts) {
-                    onInput(it)
+                if (!isLoading) {
+                    MicrophoneInput(isTtsSpeaking, stopTts) {
+                        keyboard?.hide()
 
-                    keyboard?.hide()
-
-                    if (!isLoading) {
+                        onInput(it)
                         onSubmit(true)
                     }
                 }

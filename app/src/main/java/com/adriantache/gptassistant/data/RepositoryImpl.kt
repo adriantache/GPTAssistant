@@ -1,18 +1,19 @@
 package com.adriantache.gptassistant.data
 
+import com.adriantache.gptassistant.data.firebase.FirebaseDatabaseImpl
 import com.adriantache.gptassistant.data.model.ChatMessage.Companion.toChatMessages
 import com.adriantache.gptassistant.data.model.OpenAiRequest
 import com.adriantache.gptassistant.data.retrofit.OpenAiApi
 import com.adriantache.gptassistant.data.retrofit.getRetrofit
 import com.adriantache.gptassistant.domain.data.Repository
-import com.adriantache.gptassistant.domain.model.Conversation
 import com.adriantache.gptassistant.domain.model.Message
+import com.adriantache.gptassistant.domain.model.data.ConversationData
 
-// TODO: add functionality: save conversation
 class RepositoryImpl(
     private val service: OpenAiApi = getRetrofit().create(OpenAiApi::class.java),
+    private val firebaseDatabase: FirebaseDatabaseImpl = FirebaseDatabaseImpl(), // todo hide behind interface
 ) : Repository {
-    override suspend fun getReply(conversation: Conversation): Result<Message> {
+    override suspend fun getReply(conversation: ConversationData): Result<Message> {
         val response = try {
             service.getCompletions(OpenAiRequest(messages = conversation.toChatMessages()))
         } catch (e: Exception) {
@@ -25,5 +26,9 @@ class RepositoryImpl(
         } else {
             Result.failure(IllegalArgumentException(response.errorBody()?.string()))
         }
+    }
+
+    override suspend fun saveConversation(conversation: ConversationData) {
+        firebaseDatabase.saveConversation(conversation = conversation)
     }
 }

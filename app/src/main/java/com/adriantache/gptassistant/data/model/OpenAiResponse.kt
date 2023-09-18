@@ -1,14 +1,14 @@
 package com.adriantache.gptassistant.data.model
 
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class OpenAiResponse(
     val id: String,
     val choices: List<Choice>,
     val model: String?,
     val engine: String?,
     val prompt: String?,
-    val temperature: Double?
+    val temperature: Double?,
 )
 
