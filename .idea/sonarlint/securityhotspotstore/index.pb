@@ -39,8 +39,6 @@ v
 Fapp/src/main/java/com/adriantache/gptassistant/domain/model/Message.kt,c\c\cc522344f5ebc8022ae7ad9a33e71e232fbe3165
 |
 Lapp/src/main/java/com/adriantache/gptassistant/presentation/view/InputRow.kt,d\c\dc727269600378eecaf6fedad08104a72e468d8f
-@
-app/build.gradle,f\4\f4a01d6a4fcb971362ec00a83903fd3902f52164
 w
 G.idea/sonarlint/issuestore/a/0/a05426d4e8d6f96f7ce9bd16d8608e9d19adcf73,1\d\1d7b9d4a7aea1803f66965d41b56486561f57266
 w

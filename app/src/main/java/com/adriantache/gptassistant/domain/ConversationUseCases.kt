@@ -1,6 +1,5 @@
 package com.adriantache.gptassistant.domain
 
-import com.adriantache.gptassistant.data.RepositoryImpl
 import com.adriantache.gptassistant.domain.data.Repository
 import com.adriantache.gptassistant.domain.model.Conversation
 import com.adriantache.gptassistant.domain.model.ConversationEvent
@@ -21,7 +20,7 @@ private val titleQuery = Message.UserMessage("Suggest a title for this conversat
 
 @Suppress("kotlin:S6305")
 class ConversationUseCases(
-    private val repository: Repository = RepositoryImpl(),
+    private val repository: Repository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
     private val scope = CoroutineScope(dispatcher)

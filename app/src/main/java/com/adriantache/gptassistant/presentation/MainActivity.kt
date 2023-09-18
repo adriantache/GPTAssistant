@@ -20,15 +20,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import com.adriantache.gptassistant.di.koinSetup
 import com.adriantache.gptassistant.domain.ConversationUseCases
 import com.adriantache.gptassistant.domain.model.ConversationEvent
 import com.adriantache.gptassistant.presentation.view.ClearConversationDialog
 import com.adriantache.gptassistant.presentation.view.ConversationView
 import com.adriantache.gptassistant.presentation.view.PreviousConversationsDialog
 import com.adriantache.gptassistant.ui.theme.GPTAssistantTheme
+import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
-    private val useCases = ConversationUseCases()
+    private val useCases: ConversationUseCases by inject()
 
     private lateinit var tts: TTS
     private lateinit var audioManager: AudioManager
@@ -50,6 +52,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        koinSetup()
 
         setContent {
             val keyboard = LocalSoftwareKeyboardController.current

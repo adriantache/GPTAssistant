@@ -78,4 +78,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
     implementation 'com.google.firebase:firebase-common-ktx'
     implementation("com.google.firebase:firebase-database-ktx")
+
+    implementation "io.insert-koin:koin-android:3.3.3"
+    implementation "io.insert-koin:koin-androidx-compose:3.4.2"
 }

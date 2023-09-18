@@ -37,8 +37,6 @@ G.idea/sonarlint/issuestore/a/1/a1756138b8dd2c668502e46d1312c226c4eaebd3,2\d\2d
 Q.idea/sonarlint/securityhotspotstore/a/0/a05426d4e8d6f96f7ce9bd16d8608e9d19adcf73,2\e\2eb957b43eca54a93b2b5324ff616b9bc02cc11c
 @
 build.gradle.kts,d\b\dbcff70658daf80b53ce624f6adcaa529df5ed8d
-@
-app/build.gradle,f\4\f4a01d6a4fcb971362ec00a83903fd3902f52164
 s
 Capp/src/main/java/com/adriantache/gptassistant/data/model/Choice.kt,b\3\b370f7f33180bfb9cf5aac8361e3d9d881793e93
 {
