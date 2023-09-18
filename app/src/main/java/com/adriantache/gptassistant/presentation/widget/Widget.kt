@@ -21,13 +21,17 @@ import com.adriantache.gptassistant.domain.model.ConversationEvent
 import com.adriantache.gptassistant.presentation.tts.AudioRecognizer
 import com.adriantache.gptassistant.presentation.tts.TtsHelper
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.component.inject
 
+// TODO: improve error states, UI in general
 // TODO: continue with https://developer.android.com/jetpack/compose/glance/user-interaction
 class Widget : GlanceAppWidget(), KoinComponent {
     private val useCases: ConversationUseCases by inject()
-    private val tts: TtsHelper by inject()
     private val audioRecognizer: AudioRecognizer by inject()
+
+    // TTS needs to be initialized before we ask it to speak, and that can take a bit of time...
+    private val tts: TtsHelper = get()
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {

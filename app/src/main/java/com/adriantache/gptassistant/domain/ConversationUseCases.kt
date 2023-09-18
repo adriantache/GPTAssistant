@@ -29,6 +29,8 @@ class ConversationUseCases(
     @get:Synchronized
     private var conversation = Conversation()
 
+    private var lastRequestTime = 0L
+
     val state: MutableStateFlow<ConversationUi> = MutableStateFlow(conversation.toUi(false))
     val events: MutableStateFlow<Event<ConversationEvent>?> = MutableStateFlow(null)
 
@@ -38,6 +40,12 @@ class ConversationUseCases(
     }
 
     fun onSubmit(fromSpeech: Boolean) {
+        // TODO: remove this hack
+        if (System.currentTimeMillis() - lastRequestTime < 500) {
+            return
+        }
+        lastRequestTime = System.currentTimeMillis()
+
         conversation = conversation.onSubmit()
         updateState(isLoading = true)
 

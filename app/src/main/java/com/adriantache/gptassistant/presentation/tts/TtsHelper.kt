@@ -41,7 +41,13 @@ class TtsHelper(context: Context) {
                 Log.e("TTS", "Initialization Failed!")
                 return@TextToSpeech
             }
-        }.apply {
+
+            configureTts()
+        }
+    }
+
+    private fun configureTts() {
+        tts.apply {
             setPitch(1f)
             setSpeechRate(1f)
             setLanguage(Locale.US).apply {
