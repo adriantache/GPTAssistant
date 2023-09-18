@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.adriantache.gptassistant.domain.model.Message
 
-// TODO: extract TTS as its own component
 @Composable
 fun ConversationView(
     conversation: List<Message>,

@@ -1,8 +1,5 @@
 package com.adriantache.gptassistant.presentation
 
-import android.media.AudioFocusRequest
-import android.media.AudioManager
-import android.media.AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,6 +20,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.adriantache.gptassistant.di.koinSetup
 import com.adriantache.gptassistant.domain.ConversationUseCases
 import com.adriantache.gptassistant.domain.model.ConversationEvent
+import com.adriantache.gptassistant.presentation.tts.TtsHelper
 import com.adriantache.gptassistant.presentation.view.ClearConversationDialog
 import com.adriantache.gptassistant.presentation.view.ConversationView
 import com.adriantache.gptassistant.presentation.view.PreviousConversationsDialog
@@ -31,24 +29,7 @@ import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
     private val useCases: ConversationUseCases by inject()
-
-    private lateinit var tts: TTS
-    private lateinit var audioManager: AudioManager
-    private val audioFocusRequest = AudioFocusRequest.Builder(AUDIOFOCUS_GAIN_TRANSIENT).build()
-
-    override fun onResume() {
-        super.onResume()
-
-        tts = TTS(this)
-        audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-    }
-
-    override fun onDestroy() {
-        tts.stop()
-        tts.destroy()
-
-        super.onDestroy()
-    }
+    private val tts: TtsHelper by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,25 +43,17 @@ class MainActivity : ComponentActivity() {
             var showPreviousConversationsDialog: Boolean by remember { mutableStateOf(false) }
             var showErrorMessage: String? by remember { mutableStateOf(null) }
 
-            val isTtsSpeaking by tts.isTtsSpeaking.collectAsState()
+            var isTtsSpeaking by remember { mutableStateOf(false) }
 
             val screenState by useCases.state.collectAsState()
             val events by useCases.events.collectAsState()
 
             KeepScreenOn(screenState.isLoading)
 
-            LaunchedEffect(isTtsSpeaking) {
-                if (!isTtsSpeaking) {
-                    audioManager.abandonAudioFocusRequest(audioFocusRequest)
-                }
-            }
-
             LaunchedEffect(events) {
                 when (val event = events?.value) {
-                    is ConversationEvent.SpeakReply -> {
-                        audioManager.requestAudioFocus(audioFocusRequest)
-                        tts.speak(event.output)
-                    }
+                    is ConversationEvent.SpeakReply -> tts.speak(event.output)
+                        .collect { isTtsSpeaking = it }
 
                     is ConversationEvent.Error -> showErrorMessage = event.message ?: "An error has occurred."
 
