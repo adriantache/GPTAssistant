@@ -10,6 +10,7 @@ import com.adriantache.gptassistant.data.retrofit.OpenAiApi
 import com.adriantache.gptassistant.data.retrofit.getRetrofit
 import com.adriantache.gptassistant.domain.ConversationUseCases
 import com.adriantache.gptassistant.domain.data.Repository
+import com.adriantache.gptassistant.presentation.tts.AudioRecognizer
 import com.adriantache.gptassistant.presentation.tts.TtsHelper
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -36,6 +37,7 @@ fun Activity.koinSetup() {
                 factory<SharedPreferences> { get<Context>().getSharedPreferences(preferencesFile, MODE_PRIVATE) }
 
                 single { TtsHelper(get()) }
+                single { AudioRecognizer(get()) }
             }
         )
     }

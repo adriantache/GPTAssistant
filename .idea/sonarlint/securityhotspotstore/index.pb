@@ -1,12 +1,8 @@
 
-r
-Bapp/src/main/java/com/adriantache/gptassistant/presentation/TTS.kt,0\7\07f7665bfd5351a0b19b24089fdba5f43f9e8809
 s
 Capp/src/main/java/com/adriantache/gptassistant/domain/util/Event.kt,a\1\a1756138b8dd2c668502e46d1312c226c4eaebd3
 Ä
 Papp/src/androidTest/java/com/adriantache/gptassistant/ExampleInstrumentedTest.kt,d\d\dd339e85ffdbb9484f8379ee04765e22c7591fa9
-P
- app/src/main/AndroidManifest.xml,8\c\8c55c3ccc257e5907959013f99656e4c8ec3903e
 Ä
 Papp/src/main/java/com/adriantache/gptassistant/domain/model/ConversationEvent.kt,1\d\1d20df911a3bf82067b531566a788191f03047d0
 Å

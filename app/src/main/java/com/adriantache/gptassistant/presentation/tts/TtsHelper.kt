@@ -54,7 +54,7 @@ class TtsHelper(context: Context) {
 
     // Used because the status listener isn't working.
     private fun getStatusFlow(): StateFlow<Boolean> {
-        val statusFlow = MutableStateFlow(tts.isSpeaking)
+        val statusFlow = MutableStateFlow(true)
 
         CoroutineScope(Dispatchers.Default).launch {
             while (tts.isSpeaking) {
