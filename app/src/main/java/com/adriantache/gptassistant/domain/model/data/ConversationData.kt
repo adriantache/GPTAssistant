@@ -22,7 +22,7 @@ data class ConversationData(
         fun Conversation.toData(title: String? = null): ConversationData {
             return ConversationData(
                 title = title,
-                messages = messages.map { it.toData() },
+                messages = messages.mapNotNull { it.toData() },
             )
         }
     }

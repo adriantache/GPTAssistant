@@ -26,12 +26,12 @@ data class Conversation(
         val userInput = Message.UserMessage(latestInput)
 
         return Conversation(
-            messages = messages + userInput,
+            messages = messages + userInput + Message.Loading,
             latestInput = "",
         )
     }
 
     fun onReply(reply: Message): Conversation {
-        return Conversation(messages = messages + reply)
+        return Conversation(messages = messages.filterNot { it is Message.Loading } + reply)
     }
 }

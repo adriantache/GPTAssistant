@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -41,13 +40,15 @@ fun InputRow(
             Row {
                 Spacer(Modifier.width(2.dp))
 
-                if (!isLoading) {
-                    MicrophoneInput(isTtsSpeaking, stopTts) {
-                        keyboard?.hide()
+                MicrophoneInput(
+                    isEnabled = !isLoading,
+                    isSpeaking = isTtsSpeaking,
+                    stopTTS = stopTts
+                ) {
+                    keyboard?.hide()
 
-                        onInput(it)
-                        onSubmit(true)
-                    }
+                    onInput(it)
+                    onSubmit(true)
                 }
             }
         },
@@ -56,15 +57,14 @@ fun InputRow(
                 modifier = Modifier.requiredSize(24.dp),
                 horizontalArrangement = Arrangement.Center,
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator(strokeWidth = 2.dp)
-                } else {
-                    IconButton(onClick = { onSubmit(false) }) {
-                        Icon(
-                            painterResource(id = R.drawable.baseline_east_24),
-                            contentDescription = "Submit"
-                        )
-                    }
+                IconButton(
+                    onClick = { onSubmit(false) },
+                    enabled = !isLoading
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.baseline_east_24),
+                        contentDescription = "Submit"
+                    )
                 }
             }
         },

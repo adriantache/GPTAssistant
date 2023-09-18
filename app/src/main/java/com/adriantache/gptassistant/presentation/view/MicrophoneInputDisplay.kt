@@ -25,18 +25,18 @@ import androidx.compose.ui.unit.dp
 fun MicrophoneInputDisplay(
     modifier: Modifier = Modifier,
     amplitudePercent: Float,
-
-    ) {
+) {
     var canvasHeight by remember { mutableStateOf(0) }
     var canvasWidth by remember { mutableStateOf(0) }
     val color = LocalContentColor.current
 
-    Canvas(modifier = modifier
-        .fillMaxSize()
-        .onGloballyPositioned {
-            canvasWidth = it.size.width
-            canvasHeight = it.size.height
-        }
+    Canvas(
+        modifier = modifier
+            .fillMaxSize()
+            .onGloballyPositioned {
+                canvasWidth = it.size.width
+                canvasHeight = it.size.height
+            }
     ) {
         val width = canvasWidth.toFloat()
         val height = canvasHeight.toFloat()

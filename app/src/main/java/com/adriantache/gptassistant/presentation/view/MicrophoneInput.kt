@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -18,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -29,6 +31,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MicrophoneInput(
+    isEnabled: Boolean,
     isSpeaking: Boolean,
     stopTTS: () -> Unit,
     onResult: (String) -> Unit,
@@ -95,11 +98,17 @@ fun MicrophoneInput(
                 )
             }
 
-            !isListening -> IconButton(onClick = {
-                stopTTS()
-                recognizer.startListening(recognizerIntent)
-            }) {
-                Icon(painter = painterResource(id = R.drawable.baseline_mic_24), contentDescription = null)
+            !isListening -> IconButton(
+                onClick = {
+                    stopTTS()
+                    recognizer.startListening(recognizerIntent)
+                }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_mic_24),
+                    contentDescription = "Speak input",
+                    tint = if (isEnabled) Color.Unspecified else LocalContentColor.current.copy(alpha = 0.38f)
+                )
             }
 
             else -> MicrophoneInputDisplay(

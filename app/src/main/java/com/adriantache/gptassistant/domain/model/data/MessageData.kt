@@ -25,11 +25,12 @@ sealed class MessageData {
     }
 
     companion object {
-        fun Message.toData(): MessageData {
+        fun Message.toData(): MessageData? {
             return when (this) {
                 is Message.AdminMessage -> AdminMessage(content)
                 is Message.GptMessage -> GptMessage(content)
                 is Message.UserMessage -> UserMessage(content)
+                Message.Loading -> null
             }
         }
     }

@@ -38,8 +38,8 @@ class ConversationUseCases(
     }
 
     fun onSubmit(fromSpeech: Boolean) {
-        updateState(isLoading = true)
         conversation = conversation.onSubmit()
+        updateState(isLoading = true)
 
         scope.launch {
             repository.getReply(conversation.toData())

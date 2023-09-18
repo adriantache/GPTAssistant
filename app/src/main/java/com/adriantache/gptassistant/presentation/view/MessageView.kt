@@ -5,16 +5,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +44,7 @@ fun MessageView(
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = contentAlignment,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (isUserMessage) {
             IconButton(
@@ -67,6 +71,19 @@ fun MessageView(
                 style = MaterialTheme.typography.bodyMedium,
                 color = textColor,
             )
+
+            if (chatMessage is Message.Loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .requiredSize(24.dp), contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp,
+                    )
+                }
+            }
         }
 
         if (!isUserMessage) {
