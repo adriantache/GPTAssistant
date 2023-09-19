@@ -19,6 +19,8 @@ import androidx.glance.layout.height
 import com.adriantache.gptassistant.domain.ConversationUseCases
 import com.adriantache.gptassistant.domain.model.ConversationEvent
 import com.adriantache.gptassistant.presentation.tts.AudioRecognizer
+import com.adriantache.gptassistant.presentation.tts.AudioRecognizer.RecognizerState.Failure
+import com.adriantache.gptassistant.presentation.tts.AudioRecognizer.RecognizerState.Success
 import com.adriantache.gptassistant.presentation.tts.TtsHelper
 import kotlinx.coroutines.delay
 import org.koin.core.component.KoinComponent
@@ -41,13 +43,15 @@ class Widget : GlanceAppWidget(), KoinComponent {
             val recognizerState by audioRecognizer.state.collectAsState()
             LaunchedEffect(recognizerState) {
                 when (val recognizerStateValue = recognizerState) {
-                    is AudioRecognizer.RecognizerState.Success -> {
+                    is Success -> {
                         recognizerStateValue.result.value?.let {
                             output = "Wait"
-                            useCases.onInput(it)
+                            useCases.onInput(it, fromWidget = true)
                             useCases.onSubmit(true)
                         }
                     }
+
+                    Failure -> output = "Fail"
 
                     else -> Unit
                 }
