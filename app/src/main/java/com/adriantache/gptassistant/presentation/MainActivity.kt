@@ -95,8 +95,8 @@ class MainActivity : ComponentActivity() {
 
                     if (showResetConfirmation) {
                         ClearConversationDialog(
-                            onConfirm = { saveConversation ->
-                                useCases.onResetConversation(saveConversation = saveConversation)
+                            onConfirm = {
+                                useCases.onResetConversation()
                                 showResetConfirmation = false
                             },
                             onDismiss = { showResetConfirmation = false },

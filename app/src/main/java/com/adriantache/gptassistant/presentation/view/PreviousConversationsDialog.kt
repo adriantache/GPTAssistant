@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +38,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle.Companion.Italic
 import androidx.compose.ui.text.font.FontStyle.Companion.Normal
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.adriantache.gptassistant.R
 import com.adriantache.gptassistant.domain.model.Conversation
 import com.adriantache.gptassistant.domain.model.ui.ConversationUi
@@ -51,7 +52,7 @@ import java.time.format.DateTimeFormatter
 
 private var newConversation = Conversation(title = "New conversation").toUi(false)
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PreviousConversationsDialog(
     getConversationHistory: suspend () -> ConversationsUi,
@@ -72,18 +73,23 @@ fun PreviousConversationsDialog(
         onDelete = conversationsUi.onDeleteConversation
     }
 
-    AlertDialog(
+    Dialog(
         onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(16.dp)
                 .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             stickyHeader {
-                Text("Pick a saved conversation.")
+                Text(
+                    text = "Pick a saved conversation",
+                    style = MaterialTheme.typography.headlineSmall,
+                )
 
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -157,6 +163,12 @@ fun PreviousConversationsDialog(
         if (deleteConversationId != null) {
             AlertDialog(
                 onDismissRequest = { deleteConversationId = null },
+                title = {
+                    Text("Delete conversation")
+                },
+                text = {
+                    Text("Are you sure you want to delete this conversation?")
+                },
                 confirmButton = {
                     Button(onClick = {
                         deleteConversationId?.let {
@@ -170,12 +182,11 @@ fun PreviousConversationsDialog(
                         Text("Confirm")
                     }
                 },
-                title = {
-                    Text("Delete conversation")
-                },
-                text = {
-                    Text("Are you sure you want to delete this conversation?")
-                },
+                dismissButton = {
+                    Button(onClick = { deleteConversationId = null }) {
+                        Text("Cancel")
+                    }
+                }
             )
         }
     }

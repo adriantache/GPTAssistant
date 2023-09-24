@@ -77,17 +77,11 @@ class ConversationUseCases(
         }
     }
 
-    fun onResetConversation(saveConversation: Boolean) {
+    fun onResetConversation() {
         updateState(isLoading = true)
 
-        scope.launch {
-            if (saveConversation) {
-                saveConversation()
-            }
-
-            conversation = Conversation()
-            updateState()
-        }
+        conversation = Conversation()
+        updateState()
     }
 
     private suspend fun saveConversation() {
