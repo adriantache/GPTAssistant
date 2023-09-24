@@ -34,4 +34,8 @@ class RepositoryImpl(
     override suspend fun getConversations(): List<ConversationData> {
         return firebaseDatabase.getConversations()
     }
+
+    override suspend fun deleteConversation(conversationId: String) {
+        firebaseDatabase.deleteConversation(conversationId)
+    }
 }

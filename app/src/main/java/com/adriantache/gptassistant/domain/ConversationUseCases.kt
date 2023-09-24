@@ -7,6 +7,7 @@ import com.adriantache.gptassistant.domain.model.Message
 import com.adriantache.gptassistant.domain.model.data.ConversationData.Companion.toData
 import com.adriantache.gptassistant.domain.model.ui.ConversationUi
 import com.adriantache.gptassistant.domain.model.ui.ConversationUi.Companion.toUi
+import com.adriantache.gptassistant.domain.model.ui.ConversationsUi
 import com.adriantache.gptassistant.domain.util.Event
 import com.adriantache.gptassistant.domain.util.Event.Companion.asEvent
 import kotlinx.coroutines.CoroutineDispatcher
@@ -62,6 +63,7 @@ class ConversationUseCases(
             repository.getReply(conversation.toData())
                 .onSuccess { reply ->
                     conversation = conversation.onReply(reply)
+                    saveConversation()
                     updateState()
 
                     if (fromSpeech) {
@@ -80,16 +82,7 @@ class ConversationUseCases(
 
         scope.launch {
             if (saveConversation) {
-                val title = if (conversation.title != null) {
-                    conversation.title
-                } else {
-                    repository.getReply(
-                        conversation.copy(messages = conversation.messages + titleQuery).toData()
-                    ).getOrNull()?.content
-                        ?: UUID.randomUUID().toString()
-                }
-
-                repository.saveConversation(conversation.toData(title))
+                saveConversation()
             }
 
             conversation = Conversation()
@@ -97,13 +90,35 @@ class ConversationUseCases(
         }
     }
 
-    fun onLoadConversation(conversation: Conversation) {
-        this.conversation = conversation
+    private suspend fun saveConversation() {
+        if (conversation.title == null) {
+            val title = repository.getReply(
+                conversation.copy(messages = conversation.messages + titleQuery).toData()
+            ).getOrNull()?.content
+                ?: UUID.randomUUID().toString()
+
+            conversation = conversation.copy(title = title)
+        }
+
+        repository.saveConversation(conversation.toData())
+    }
+
+    fun onLoadConversation(conversation: ConversationUi) {
+        this.conversation = conversation.toEntity()
         updateState()
     }
 
-    suspend fun getConversations(): List<Conversation> {
-        return repository.getConversations().map { it.toConversation() }
+    suspend fun getConversations(): ConversationsUi {
+        val conversations = repository.getConversations().map { it.toConversation() }
+
+        return ConversationsUi(
+            conversations = conversations.map { it.toUi(false) },
+            onDeleteConversation = ::deleteConversation,
+        )
+    }
+
+    private suspend fun deleteConversation(conversationId: String) {
+        repository.deleteConversation(conversationId)
     }
 
     private fun updateState(isLoading: Boolean = false) {

@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.surface,
                 ) {
                     ConversationView(
-                        conversation = screenState.conversation,
+                        conversation = screenState.messages,
                         isLoading = screenState.isLoading,
                         isTtsSpeaking = isTtsSpeaking,
                         input = screenState.latestInput,

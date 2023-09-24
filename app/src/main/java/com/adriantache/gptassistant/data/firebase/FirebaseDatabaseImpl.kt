@@ -15,6 +15,7 @@ import java.util.UUID
 private const val DATABASE_URL = "https://chatgpt-44830-default-rtdb.europe-west1.firebasedatabase.app/"
 private const val ID_KEY = "ID_KEY"
 
+// TODO: implement this properly
 class FirebaseDatabaseImpl(
     preferences: SharedPreferences,
 ) {
@@ -33,24 +34,43 @@ class FirebaseDatabaseImpl(
         myRef = database.getReference("message-$id")
     }
 
+    suspend fun saveConversation(conversation: ConversationData) {
+        val currentDatabase = getDatabaseContents()
+        val updatedContents = getDatabaseContents().map {
+            if (it.id != conversation.id) return@map it
+
+            conversation
+        }.toMutableList()
+
+        if (!updatedContents.contains(conversation)) {
+            updatedContents += conversation
+        }
+
+        if (currentDatabase == updatedContents) return
+
+        updateDatabase(updatedContents)
+    }
+
+    suspend fun getConversations(): List<ConversationData> {
+        return getDatabaseContents()
+    }
+
+    suspend fun deleteConversation(conversationId: String) {
+        val conversations = getDatabaseContents()
+        val updatedState = conversations.filterNot { it.id == conversationId || it.id == null }
+
+        updateDatabase(updatedState)
+    }
+
     private suspend fun getDatabaseContents(): List<ConversationData> {
         val json = myRef.get().await().getValue<String>() ?: return emptyList()
 
         return Json.decodeFromString<List<ConversationData>>(json)
     }
 
-    suspend fun saveConversation(conversation: ConversationData) {
-        val currentDatabase = getDatabaseContents()
-        val updatedContents = (currentDatabase + conversation).distinct()
-
-        if (currentDatabase == updatedContents) return
-
+    private fun updateDatabase(updatedContents: List<ConversationData>) {
         val json = Json.encodeToString(updatedContents)
 
         myRef.setValue(json)
-    }
-
-    suspend fun getConversations(): List<ConversationData> {
-        return getDatabaseContents()
     }
 }

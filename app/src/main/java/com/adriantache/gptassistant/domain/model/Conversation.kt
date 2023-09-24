@@ -1,6 +1,10 @@
 package com.adriantache.gptassistant.domain.model
 
+import java.util.UUID
+
 data class Conversation(
+    val id: String = UUID.randomUUID().toString(),
+    val startedAt: Long = System.currentTimeMillis(),
     val title: String? = null,
     val messages: List<Message> = emptyList(),
     val latestInput: String = "",
@@ -14,7 +18,7 @@ data class Conversation(
             return this.copy(errorMessage = "Please input something.")
         }
 
-        return Conversation(
+        return this.copy(
             messages = messages,
             latestInput = input,
         )
@@ -25,13 +29,13 @@ data class Conversation(
 
         val userInput = Message.UserMessage(latestInput)
 
-        return Conversation(
-            messages = messages + userInput + Message.Loading,
+        return this.copy(
+            messages = messages + userInput + Message.Loading(),
             latestInput = "",
         )
     }
 
     fun onReply(reply: Message): Conversation {
-        return Conversation(messages = messages.filterNot { it is Message.Loading } + reply)
+        return this.copy(messages = messages.filterNot { it is Message.Loading } + reply)
     }
 }

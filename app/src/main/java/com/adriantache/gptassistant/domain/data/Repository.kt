@@ -9,4 +9,6 @@ interface Repository {
     suspend fun saveConversation(conversation: ConversationData)
 
     suspend fun getConversations(): List<ConversationData>
+
+    suspend fun deleteConversation(conversationId: String)
 }

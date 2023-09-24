@@ -43,22 +43,23 @@ import com.adriantache.gptassistant.presentation.util.openSearch
 
 @Composable
 fun MessageView(
-    chatMessage: Message,
+    modifier: Modifier = Modifier,
+    message: Message,
 ) {
-    val bgColor = when (chatMessage) {
+    val bgColor = when (message) {
         is UserMessage -> MaterialTheme.colorScheme.primary
-        Loading -> MaterialTheme.colorScheme.surface
+        is Loading -> MaterialTheme.colorScheme.surface
         else -> MaterialTheme.colorScheme.secondary
     }
-    val textColor = if (chatMessage is UserMessage) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary
-    val contentAlignment = if (chatMessage is UserMessage) Arrangement.End else Arrangement.Start
-    val modifier = when (chatMessage) {
+    val textColor = if (message is UserMessage) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary
+    val contentAlignment = if (message is UserMessage) Arrangement.End else Arrangement.Start
+    val finalModifier = when (message) {
         is UserMessage,
         is GptMessage,
         is AdminMessage,
-        -> Modifier.fillMaxWidth(0.75f)
+        -> modifier.fillMaxWidth(0.75f)
 
-        Loading -> Modifier
+        is Loading -> modifier
             .fillMaxWidth()
             .requiredHeight(200.dp)
     }
@@ -71,11 +72,11 @@ fun MessageView(
         horizontalArrangement = contentAlignment,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (chatMessage is UserMessage) {
+        if (message is UserMessage) {
             IconButton(
                 modifier = Modifier.requiredSize(48.dp),
                 onClick = {
-                    context.openSearch(chatMessage.content)
+                    context.openSearch(message.content)
                 }
             ) {
                 Icon(painter = painterResource(id = R.drawable.baseline_search_24), contentDescription = "Copy message")
@@ -85,18 +86,18 @@ fun MessageView(
         }
 
         Box(
-            modifier = modifier
+            modifier = finalModifier
                 .background(bgColor, OutlinedTextFieldDefaults.shape)
                 .padding(8.dp),
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = chatMessage.content,
+                text = message.content,
                 style = MaterialTheme.typography.bodyMedium,
                 color = textColor,
             )
 
-            if (chatMessage is Loading) {
+            if (message is Loading) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize(),
@@ -127,13 +128,13 @@ fun MessageView(
             }
         }
 
-        if (chatMessage is GptMessage || chatMessage is AdminMessage) {
+        if (message is GptMessage || message is AdminMessage) {
             Spacer(Modifier.width(8.dp))
 
             IconButton(
                 modifier = Modifier.requiredSize(48.dp),
                 onClick = {
-                    clipboardManager.setText(AnnotatedString(chatMessage.content))
+                    clipboardManager.setText(AnnotatedString(message.content))
                 }
             ) {
                 Icon(painter = painterResource(id = R.drawable.baseline_content_copy_24), contentDescription = "Copy message")
