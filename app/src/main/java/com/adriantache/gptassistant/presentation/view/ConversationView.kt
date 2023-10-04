@@ -58,7 +58,7 @@ fun ConversationView(
     val isFabVisible by remember {
         derivedStateOf {
             entries.addItem(lazyListState.firstVisibleItemIndex)
-            !entries.isScrollingDown
+            !entries.isScrollingDown || lazyListState.firstVisibleItemIndex == 0
         }
     }
 
