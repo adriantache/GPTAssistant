@@ -1,6 +1,5 @@
 package com.adriantache.gptassistant.presentation.view
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -52,7 +52,6 @@ import java.time.format.DateTimeFormatter
 
 private var newConversation = Conversation(title = "New conversation").toUi(false)
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PreviousConversationsDialog(
     getConversationHistory: suspend () -> ConversationsUi,
@@ -61,16 +60,21 @@ fun PreviousConversationsDialog(
 ) {
     val scope = rememberCoroutineScope()
 
-    var conversations by remember { mutableStateOf(emptyList<ConversationUi>()) }
+    var conversations by remember { mutableStateOf(listOf(newConversation)) }
     lateinit var onDelete: suspend (String) -> Unit
 
+    var isLoading: Boolean by remember { mutableStateOf(true) }
     var deleteConversationId: String? by remember { mutableStateOf(null) }
 
     LaunchedEffect(Unit) {
+        isLoading = true
+
         val conversationsUi = getConversationHistory()
 
         conversations = listOf(newConversation) + conversationsUi.conversations
         onDelete = conversationsUi.onDeleteConversation
+
+        isLoading = false
     }
 
     Dialog(
@@ -85,7 +89,7 @@ fun PreviousConversationsDialog(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            stickyHeader {
+            item {
                 Text(
                     text = "Pick a saved conversation",
                     style = MaterialTheme.typography.headlineSmall,
@@ -156,6 +160,12 @@ fun PreviousConversationsDialog(
                             )
                         }
                     }
+                }
+            }
+
+            if (isLoading) {
+                item {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
             }
         }
