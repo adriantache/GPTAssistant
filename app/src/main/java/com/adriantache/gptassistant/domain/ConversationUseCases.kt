@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+private const val ONE_DAY_MS = 1000 * 60 * 60 * 24
+private const val THREE_MINUTES_MS = 3 * 60 * 1000
 private val titleQuery = Message.UserMessage("Suggest a title for this conversation.")
 
 @Suppress("kotlin:S6305")
@@ -40,7 +42,7 @@ class ConversationUseCases(
         fromWidget: Boolean = false,
     ) {
         // Automatically reset the conversation if we haven't interacted with the Widget in a while.
-        val isWidgetExpired = System.currentTimeMillis() - lastRequestTime > (3 * 60 * 1000)
+        val isWidgetExpired = System.currentTimeMillis() - lastRequestTime > THREE_MINUTES_MS
         if (fromWidget && isWidgetExpired) {
             conversation = Conversation()
         }
@@ -102,11 +104,19 @@ class ConversationUseCases(
         updateState()
     }
 
-    suspend fun getConversations(): ConversationsUi {
+    suspend fun getConversations(
+        dateRangeStart: Long?,
+        dateRangeEnd: Long?,
+    ): ConversationsUi {
         val conversations = repository.getConversations().map { it.toConversation() }
 
         return ConversationsUi(
-            conversations = conversations.map { it.toUi(false) },
+            conversations = conversations.filter {
+                val isAfterStartDate = dateRangeStart == null || it.startedAt >= dateRangeStart
+                val isBeforeEndDate = dateRangeEnd == null || it.startedAt <= (dateRangeEnd + ONE_DAY_MS)
+
+                isAfterStartDate && isBeforeEndDate
+            }.map { it.toUi(false) },
             onDeleteConversation = ::deleteConversation,
         )
     }

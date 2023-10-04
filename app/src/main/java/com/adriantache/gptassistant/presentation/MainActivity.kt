@@ -114,6 +114,18 @@ class MainActivity : ComponentActivity() {
                             onDismissRequest = { showErrorMessage = null },
                         )
                     }
+
+//                    BezierAnimation()
+//                    BezierAnimation()
+//                    BezierAnimation()
+//                    BezierAnimation()
+
+//                    Box(
+//                        modifier = Modifier.fillMaxSize(),
+//                        contentAlignment = Alignment.Center,
+//                    ) {
+//                        Waves()
+//                    }
                 }
             }
         }

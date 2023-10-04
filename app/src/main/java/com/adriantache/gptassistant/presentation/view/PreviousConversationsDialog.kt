@@ -20,7 +20,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CalendarLocale
+import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.DateRangePickerState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle.Companion.Italic
 import androidx.compose.ui.text.font.FontStyle.Companion.Normal
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -47,14 +53,17 @@ import com.adriantache.gptassistant.domain.model.ui.ConversationUi.Companion.toU
 import com.adriantache.gptassistant.domain.model.ui.ConversationsUi
 import kotlinx.coroutines.launch
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 private var newConversation = Conversation(title = "New conversation").toUi(false)
 
+// TODO: clean this up, split into multiple composables, move logic to use case
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreviousConversationsDialog(
-    getConversationHistory: suspend () -> ConversationsUi,
+    getConversationHistory: suspend (Long?, Long?) -> ConversationsUi,
     onLoadConversation: (ConversationUi) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -64,12 +73,16 @@ fun PreviousConversationsDialog(
     lateinit var onDelete: suspend (String) -> Unit
 
     var isLoading: Boolean by remember { mutableStateOf(true) }
+    var showDatePicker: Boolean by remember { mutableStateOf(false) }
     var deleteConversationId: String? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(Unit) {
+    var dateRangeStart: Long? by remember { mutableStateOf(null) }
+    var dateRangeEnd: Long? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(dateRangeStart, dateRangeEnd) {
         isLoading = true
 
-        val conversationsUi = getConversationHistory()
+        val conversationsUi = getConversationHistory(dateRangeStart, dateRangeEnd)
 
         conversations = listOf(newConversation) + conversationsUi.conversations
         onDelete = conversationsUi.onDeleteConversation
@@ -90,10 +103,19 @@ fun PreviousConversationsDialog(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                Text(
-                    text = "Pick a saved conversation",
-                    style = MaterialTheme.typography.headlineSmall,
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = "Pick a saved conversation",
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+
+                    IconButton(onClick = { showDatePicker = true }) {
+                        Icon(painter = painterResource(id = R.drawable.baseline_filter_alt_24), contentDescription = "filter")
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -170,6 +192,65 @@ fun PreviousConversationsDialog(
             }
         }
 
+        if (showDatePicker) {
+            val datePickerState = remember {
+                DateRangePickerState(
+                    locale = CalendarLocale.getDefault(),
+                    yearRange = 2023..LocalDateTime.now().year,
+                )
+            }
+
+            AlertDialog(
+                onDismissRequest = { showDatePicker = false },
+                properties = DialogProperties(usePlatformDefaultWidth = false)
+            ) {
+                Column(
+                    Modifier
+                        .padding(16.dp)
+                        .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
+                        .padding(16.dp)
+                ) {
+                    DateRangePicker(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(16.dp),
+                        state = datePickerState
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                    ) {
+                        if (dateRangeStart != null || dateRangeEnd != null) {
+                            Button(
+                                onClick = {
+                                    dateRangeStart = null
+                                    dateRangeEnd = null
+                                    showDatePicker = false
+                                }
+                            ) {
+                                Text("Clear filter")
+                            }
+
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
+
+                        Button(
+                            onClick = {
+                                dateRangeStart = datePickerState.selectedStartDateMillis
+                                dateRangeEnd = datePickerState.selectedEndDateMillis
+                                showDatePicker = false
+                            }
+                        ) {
+                            Text("Apply filter")
+                        }
+                    }
+                }
+            }
+        }
+
         if (deleteConversationId != null) {
             AlertDialog(
                 onDismissRequest = { deleteConversationId = null },
@@ -180,15 +261,18 @@ fun PreviousConversationsDialog(
                     Text("Are you sure you want to delete this conversation?")
                 },
                 confirmButton = {
-                    Button(onClick = {
-                        deleteConversationId?.let {
-                            scope.launch {
-                                onDelete(it)
-                                deleteConversationId = null
-                                conversations = listOf(newConversation) + getConversationHistory().conversations
+                    Button(
+                        onClick = {
+                            deleteConversationId?.let {
+                                scope.launch {
+                                    onDelete(it)
+                                    deleteConversationId = null
+                                    conversations =
+                                        listOf(newConversation) + getConversationHistory(dateRangeStart, dateRangeEnd).conversations
+                                }
                             }
                         }
-                    }) {
+                    ) {
                         Text("Confirm")
                     }
                 },
@@ -200,4 +284,19 @@ fun PreviousConversationsDialog(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun PreviousConversationsDialogPreview() {
+    PreviousConversationsDialog(
+        getConversationHistory = { _, _ ->
+            ConversationsUi(
+                conversations = emptyList(),
+                onDeleteConversation = {},
+            )
+        },
+        onLoadConversation = {},
+        onDismiss = {},
+    )
 }
