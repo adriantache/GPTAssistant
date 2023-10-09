@@ -107,6 +107,7 @@ class ConversationUseCases(
     suspend fun getConversations(
         dateRangeStart: Long?,
         dateRangeEnd: Long?,
+        searchText: String?,
     ): ConversationsUi {
         val conversations = repository.getConversations().map { it.toConversation() }
 
@@ -114,8 +115,10 @@ class ConversationUseCases(
             conversations = conversations.filter {
                 val isAfterStartDate = dateRangeStart == null || it.startedAt >= dateRangeStart
                 val isBeforeEndDate = dateRangeEnd == null || it.startedAt <= (dateRangeEnd + ONE_DAY_MS)
+                val containsSearch =
+                    searchText == null || searchText.length < 2 || it.messages.any { message -> message.content.contains(searchText) }
 
-                isAfterStartDate && isBeforeEndDate
+                isAfterStartDate && isBeforeEndDate && containsSearch
             }.map { it.toUi(false) },
             onDeleteConversation = ::deleteConversation,
         )

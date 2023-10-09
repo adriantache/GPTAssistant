@@ -1,5 +1,6 @@
 package com.adriantache.gptassistant.presentation.view
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -60,10 +62,11 @@ import java.time.format.DateTimeFormatter
 private var newConversation = Conversation(title = "New conversation").toUi(false)
 
 // TODO: clean this up, split into multiple composables, move logic to use case
+// TODO: move search function to use case
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreviousConversationsDialog(
-    getConversationHistory: suspend (Long?, Long?) -> ConversationsUi,
+    getConversationHistory: suspend (Long?, Long?, String?) -> ConversationsUi,
     onLoadConversation: (ConversationUi) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -78,11 +81,12 @@ fun PreviousConversationsDialog(
 
     var dateRangeStart: Long? by remember { mutableStateOf(null) }
     var dateRangeEnd: Long? by remember { mutableStateOf(null) }
+    var searchText: String? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(dateRangeStart, dateRangeEnd) {
+    LaunchedEffect(dateRangeStart, dateRangeEnd, searchText) {
         isLoading = true
 
-        val conversationsUi = getConversationHistory(dateRangeStart, dateRangeEnd)
+        val conversationsUi = getConversationHistory(dateRangeStart, dateRangeEnd, searchText)
 
         conversations = listOf(newConversation) + conversationsUi.conversations
         onDelete = conversationsUi.onDeleteConversation
@@ -103,17 +107,50 @@ fun PreviousConversationsDialog(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+                Column {
                     Text(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.fillMaxWidth(),
                         text = "Pick a saved conversation",
                         style = MaterialTheme.typography.headlineSmall,
                     )
 
-                    IconButton(onClick = { showDatePicker = true }) {
-                        Icon(painter = painterResource(id = R.drawable.baseline_filter_alt_24), contentDescription = "filter")
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End,
+                    ) {
+                        var isSearchVisible by remember { mutableStateOf(false) }
+
+                        AnimatedVisibility(visible = isSearchVisible) {
+                            TextField(
+                                modifier = Modifier.fillMaxWidth(),
+                                value = searchText.orEmpty(),
+                                onValueChange = { searchText = it },
+                                trailingIcon = {
+                                    IconButton(onClick = {
+                                        isSearchVisible = false
+                                        searchText = null
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.baseline_delete_forever_24),
+                                            contentDescription = "clear"
+                                        )
+                                    }
+                                }
+                            )
+                        }
+
+                        AnimatedVisibility(visible = !isSearchVisible) {
+                            IconButton(onClick = { isSearchVisible = true }) {
+                                Icon(painter = painterResource(id = R.drawable.baseline_search_24), contentDescription = "search")
+                            }
+                        }
+
+                        AnimatedVisibility(visible = !isSearchVisible) {
+                            IconButton(onClick = { showDatePicker = true }) {
+                                Icon(painter = painterResource(id = R.drawable.baseline_filter_alt_24), contentDescription = "filter")
+                            }
+                        }
                     }
                 }
 
@@ -268,7 +305,11 @@ fun PreviousConversationsDialog(
                                     onDelete(it)
                                     deleteConversationId = null
                                     conversations =
-                                        listOf(newConversation) + getConversationHistory(dateRangeStart, dateRangeEnd).conversations
+                                        listOf(newConversation) + getConversationHistory(
+                                            dateRangeStart,
+                                            dateRangeEnd,
+                                            searchText,
+                                        ).conversations
                                 }
                             }
                         }
@@ -290,7 +331,7 @@ fun PreviousConversationsDialog(
 @Composable
 private fun PreviousConversationsDialogPreview() {
     PreviousConversationsDialog(
-        getConversationHistory = { _, _ ->
+        getConversationHistory = { _, _, _ ->
             ConversationsUi(
                 conversations = emptyList(),
                 onDeleteConversation = {},
