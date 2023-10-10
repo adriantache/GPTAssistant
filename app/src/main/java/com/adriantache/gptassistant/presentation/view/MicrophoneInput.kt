@@ -1,6 +1,9 @@
 package com.adriantache.gptassistant.presentation.view
 
 import android.Manifest
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -68,15 +71,25 @@ fun MicrophoneInput(
         }
     }
 
-    when {
-        isSpeaking -> IconButton(onClick = stopTTS) {
+    AnimatedVisibility(
+        visible = isSpeaking,
+        enter = fadeIn(),
+        exit = fadeOut(),
+    ) {
+        IconButton(onClick = stopTTS) {
             Icon(
                 painterResource(id = R.drawable.baseline_voice_over_off_24),
                 contentDescription = "Stop TTS"
             )
         }
+    }
 
-        !isListening -> IconButton(
+    AnimatedVisibility(
+        visible = !isSpeaking && !isListening,
+        enter = fadeIn(),
+        exit = fadeOut(),
+    ) {
+        IconButton(
             onClick = {
                 stopTTS()
                 recognizer.startListening()
@@ -88,8 +101,14 @@ fun MicrophoneInput(
                 tint = if (isEnabled) LocalContentColor.current else LocalContentColor.current.copy(alpha = 0.38f)
             )
         }
+    }
 
-        else -> MicrophoneInputDisplay(
+    AnimatedVisibility(
+        visible = isListening,
+        enter = fadeIn(),
+        exit = fadeOut(),
+    ) {
+        MicrophoneInputDisplay(
             modifier = Modifier.clickable {
                 recognizer.stopListening()
                 isListening = false
