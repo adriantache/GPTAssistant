@@ -1,9 +1,11 @@
 package com.adriantache.gptassistant.presentation.view
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
@@ -40,6 +42,7 @@ fun InputRow(
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.height(IntrinsicSize.Max)
     ) {
         Button(
             modifier = Modifier

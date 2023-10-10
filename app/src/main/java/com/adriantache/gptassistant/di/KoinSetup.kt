@@ -5,11 +5,14 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import com.adriantache.gptassistant.data.RepositoryImpl
+import com.adriantache.gptassistant.data.dataSource.SettingsDataSourceImpl
 import com.adriantache.gptassistant.data.firebase.FirebaseDatabaseImpl
 import com.adriantache.gptassistant.data.retrofit.OpenAiApi
 import com.adriantache.gptassistant.data.retrofit.getRetrofit
 import com.adriantache.gptassistant.domain.ConversationUseCases
+import com.adriantache.gptassistant.domain.SettingsUseCases
 import com.adriantache.gptassistant.domain.data.Repository
+import com.adriantache.gptassistant.domain.data.SettingsDataSource
 import com.adriantache.gptassistant.presentation.tts.AudioRecognizer
 import com.adriantache.gptassistant.presentation.tts.TtsHelper
 import org.koin.android.ext.koin.androidContext
@@ -26,8 +29,10 @@ fun Activity.koinSetup() {
         modules(
             module {
                 single { ConversationUseCases(get()) }
+                single { SettingsUseCases(get()) }
 
                 single<Repository> { RepositoryImpl(get(), get()) }
+                single<SettingsDataSource> { SettingsDataSourceImpl(get()) }
 
                 single { getRetrofit() }
                 factory<OpenAiApi> { get<Retrofit>().create(OpenAiApi::class.java) }

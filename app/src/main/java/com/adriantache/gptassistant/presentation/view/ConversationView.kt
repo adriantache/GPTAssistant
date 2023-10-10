@@ -51,6 +51,8 @@ fun ConversationView(
     stopTTS: () -> Unit,
     onResetConversation: () -> Unit,
     onLoadPreviousConversations: () -> Unit,
+    onShowSettings: () -> Unit,
+    isInputOnBottom: Boolean,
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -71,16 +73,20 @@ fun ConversationView(
             .fillMaxWidth()
             .padding(all = 16.dp),
     ) {
-        InputRow(
-            isLoading = isLoading,
-            stopTts = stopTTS,
-            isTtsSpeaking = isTtsSpeaking,
-            input = input,
-            onInput = onInput,
-            onSubmit = onSubmit,
-        )
+        AnimatedVisibility(!isInputOnBottom) {
+            InputRow(
+                isLoading = isLoading,
+                stopTts = stopTTS,
+                isTtsSpeaking = isTtsSpeaking,
+                input = input,
+                onInput = onInput,
+                onSubmit = onSubmit,
+            )
+        }
 
-        Spacer(Modifier.height(8.dp))
+        AnimatedVisibility(!isInputOnBottom) {
+            Spacer(Modifier.height(16.dp))
+        }
 
         LazyColumn(
             modifier = Modifier
@@ -110,6 +116,27 @@ fun ConversationView(
                         }
                     }
                 }
+
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .requiredHeight(48.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                            onClick = onShowSettings,
+                        ) {
+                            Text(
+                                "Settings",
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        }
+                    }
+                }
             } else {
                 items(conversation, key = { it.id }) { message ->
                     MessageView(
@@ -121,7 +148,7 @@ fun ConversationView(
         }
 
         if (canResetConversation) {
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(8.dp))
 
             AnimatedVisibility(visible = isFabVisible) {
                 FloatingActionButton(
@@ -147,6 +174,23 @@ fun ConversationView(
                     }
                 }
             }
+
+            Spacer(Modifier.height(8.dp))
+        }
+
+        AnimatedVisibility(isInputOnBottom) {
+            Spacer(Modifier.height(8.dp))
+        }
+
+        AnimatedVisibility(isInputOnBottom) {
+            InputRow(
+                isLoading = isLoading,
+                stopTts = stopTTS,
+                isTtsSpeaking = isTtsSpeaking,
+                input = input,
+                onInput = onInput,
+                onSubmit = onSubmit,
+            )
         }
     }
 }
