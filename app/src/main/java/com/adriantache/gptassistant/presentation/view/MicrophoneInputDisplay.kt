@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -26,8 +26,8 @@ fun MicrophoneInputDisplay(
     modifier: Modifier = Modifier,
     amplitudePercent: Float,
 ) {
-    var canvasHeight by remember { mutableStateOf(0) }
-    var canvasWidth by remember { mutableStateOf(0) }
+    var canvasHeight by remember { mutableIntStateOf(0) }
+    var canvasWidth by remember { mutableIntStateOf(0) }
     val color = LocalContentColor.current
 
     Canvas(

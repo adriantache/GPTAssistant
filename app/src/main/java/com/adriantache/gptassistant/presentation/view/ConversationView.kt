@@ -80,7 +80,7 @@ fun ConversationView(
             onSubmit = onSubmit,
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(8.dp))
 
         LazyColumn(
             modifier = Modifier
