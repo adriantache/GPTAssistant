@@ -54,18 +54,29 @@ fun InputRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
+        val buttonColors = if (isTtsSpeaking) {
+            ButtonColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+                disabledContainerColor = MaterialTheme.colorScheme.secondary.copy(0.7f),
+                disabledContentColor = MaterialTheme.colorScheme.onSecondary.copy(0.7f),
+            )
+        } else {
+            ButtonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(0.7f),
+                disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(0.7f),
+            )
+        }
+
         Button(
             modifier = Modifier
                 .requiredHeight(buttonHeight)
                 .requiredWidth(buttonWidth),
             shape = buttonShape,
             onClick = {},
-            colors = ButtonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(0.7f),
-                disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(0.7f),
-            ),
+            colors = buttonColors,
             contentPadding = PaddingValues(0.dp)
         ) {
             MicrophoneInput(

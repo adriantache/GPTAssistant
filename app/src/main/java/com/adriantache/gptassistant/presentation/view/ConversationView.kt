@@ -3,7 +3,6 @@ package com.adriantache.gptassistant.presentation.view
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -99,42 +98,37 @@ fun ConversationView(
         ) {
             if (conversation.isEmpty()) {
                 item {
-                    Box(
+                    Row(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Button(
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .weight(1f)
                                 .requiredHeight(48.dp),
                             shape = RoundedCornerShape(8.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
                             onClick = onLoadPreviousConversations,
                         ) {
                             Text(
-                                "Load previous conversations",
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                                text = "Load previous conversations",
+                                color = MaterialTheme.colorScheme.onSecondary,
                             )
                         }
-                    }
-                }
 
-                item {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
+                        Spacer(Modifier.width(8.dp))
+
                         Button(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .requiredHeight(48.dp),
+                            modifier = Modifier.requiredHeight(48.dp),
                             shape = RoundedCornerShape(8.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
                             onClick = onShowSettings,
                         ) {
-                            Text(
-                                "Settings",
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            Icon(
+                                painterResource(id = R.drawable.baseline_settings_24),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                         }
                     }
