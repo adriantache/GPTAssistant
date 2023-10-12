@@ -98,3 +98,11 @@ p
 build.gradle.kts,d\b\dbcff70658daf80b53ce624f6adcaa529df5ed8d
 è
 _app/src/main/java/com/adriantache/gptassistant/presentation/view/PreviousConversationsDialog.kt,9\9\99411737ec0e0347b5bf9395199781724c5e5275
+|
+Lapp/src/main/java/com/adriantache/gptassistant/domain/model/ui/SettingsUi.kt,6\f\6ffd3c7b1c0f0b47b575bd838892c216b97f8e8a
+à
+Xapp/src/main/java/com/adriantache/gptassistant/data/dataSource/SettingsDataSourceImpl.kt,f\8\f86e5ee2f5f813af28e628cb3cffeffa07b56f03
+Ä
+Papp/src/main/java/com/adriantache/gptassistant/domain/data/SettingsDataSource.kt,4\f\4f912c6a9f110366a575125a0a754be4bab3a8eb
+y
+Iapp/src/main/java/com/adriantache/gptassistant/domain/SettingsUseCases.kt,b\a\bafdbc8bd17dc785fb7c1a1e032bb03110005a4c

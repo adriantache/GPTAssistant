@@ -53,6 +53,7 @@ fun ConversationView(
     onLoadPreviousConversations: () -> Unit,
     onShowSettings: () -> Unit,
     isInputOnBottom: Boolean,
+    isConversationMode: Boolean,
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -81,6 +82,7 @@ fun ConversationView(
                 input = input,
                 onInput = onInput,
                 onSubmit = onSubmit,
+                isConversationMode = isConversationMode,
             )
         }
 
@@ -190,6 +192,7 @@ fun ConversationView(
                 input = input,
                 onInput = onInput,
                 onSubmit = onSubmit,
+                isConversationMode = isConversationMode,
             )
         }
     }

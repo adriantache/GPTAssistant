@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -37,18 +39,26 @@ fun InputRow(
     input: String,
     onInput: (input: String) -> Unit,
     onSubmit: (fromSpeech: Boolean) -> Unit,
+    isConversationMode: Boolean,
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
 
+    val buttonHeight = if (isConversationMode) 100.dp else 56.dp
+    val buttonWidth = if (isConversationMode) 100.dp else 48.dp
+    val buttonShape = if (isConversationMode) CircleShape else RoundedCornerShape(8.dp)
+
     Row(
+        modifier = Modifier
+            .height(IntrinsicSize.Max)
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.height(IntrinsicSize.Max)
+        horizontalArrangement = Arrangement.Center,
     ) {
         Button(
             modifier = Modifier
-                .requiredHeight(56.dp)
-                .requiredWidth(48.dp),
-            shape = RoundedCornerShape(8.dp),
+                .requiredHeight(buttonHeight)
+                .requiredWidth(buttonWidth),
+            shape = buttonShape,
             onClick = {},
             colors = ButtonColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -61,7 +71,8 @@ fun InputRow(
             MicrophoneInput(
                 isEnabled = !isLoading,
                 isSpeaking = isTtsSpeaking,
-                stopTTS = stopTts
+                isConversationMode = isConversationMode,
+                stopTTS = stopTts,
             ) {
                 keyboard?.hide()
 
@@ -70,32 +81,34 @@ fun InputRow(
             }
         }
 
-        Spacer(Modifier.width(4.dp))
+        if (!isConversationMode) {
+            Spacer(Modifier.width(4.dp))
 
-        TextField(
-            modifier = Modifier.weight(1f),
-            value = input,
-            enabled = !isLoading,
-            onValueChange = onInput,
-            trailingIcon = {
-                Row(
-                    modifier = Modifier.requiredSize(24.dp),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    IconButton(
-                        onClick = { onSubmit(false) },
-                        enabled = !isLoading
+            TextField(
+                modifier = Modifier.weight(1f),
+                value = input,
+                enabled = !isLoading,
+                onValueChange = onInput,
+                trailingIcon = {
+                    Row(
+                        modifier = Modifier.requiredSize(24.dp),
+                        horizontalArrangement = Arrangement.Center,
                     ) {
-                        Icon(
-                            painterResource(id = R.drawable.baseline_east_24),
-                            contentDescription = "Submit"
-                        )
+                        IconButton(
+                            onClick = { onSubmit(false) },
+                            enabled = !isLoading
+                        ) {
+                            Icon(
+                                painterResource(id = R.drawable.baseline_east_24),
+                                contentDescription = "Submit"
+                            )
+                        }
                     }
-                }
-            },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { onSubmit(false) }),
-        )
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { onSubmit(false) }),
+            )
+        }
     }
 }
 
@@ -109,5 +122,6 @@ private fun InputRowPreview() {
         input = "test",
         onInput = {},
         onSubmit = {},
+        isConversationMode = false,
     )
 }

@@ -24,6 +24,7 @@ import com.adriantache.gptassistant.presentation.tts.AudioRecognizer
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.get
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -31,6 +32,7 @@ import org.koin.androidx.compose.get
 fun MicrophoneInput(
     isEnabled: Boolean,
     isSpeaking: Boolean,
+    isConversationMode: Boolean,
     stopTTS: () -> Unit,
     recognizer: AudioRecognizer = get(),
     onResult: (String) -> Unit,
@@ -41,6 +43,11 @@ fun MicrophoneInput(
     val microphonePermission = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
 
     val recognizerState by recognizer.state.collectAsState()
+
+    fun startRecognizing() {
+        stopTTS()
+        recognizer.startListening()
+    }
 
     LaunchedEffect(recognizerState) {
         when (val state = recognizerState) {
@@ -58,6 +65,22 @@ fun MicrophoneInput(
             AudioRecognizer.RecognizerState.Failure -> isListening = false
 
             AudioRecognizer.RecognizerState.Ready -> Unit
+        }
+    }
+
+    var isWaitingForTtsSpeaking by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isConversationMode, isSpeaking) {
+        if (!isConversationMode) return@LaunchedEffect
+
+        if (isSpeaking) {
+            isWaitingForTtsSpeaking = true
+        } else if (isWaitingForTtsSpeaking) {
+            isWaitingForTtsSpeaking = false
+
+            delay(500)
+
+            startRecognizing()
         }
     }
 
@@ -90,10 +113,7 @@ fun MicrophoneInput(
         exit = fadeOut(),
     ) {
         IconButton(
-            onClick = {
-                stopTTS()
-                recognizer.startListening()
-            }
+            onClick = { startRecognizing() }
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_mic_24),

@@ -8,6 +8,7 @@ import com.adriantache.gptassistant.domain.data.SettingsDataSource
 
 private const val PREFERENCES_FILE = "preferences"
 private const val INPUT_ON_BOTTOM = "INPUT_ON_BOTTOM"
+private const val CONVERSATION_MODE = "CONVERSATION_MODE"
 
 class SettingsDataSourceImpl(
     context: Context,
@@ -22,5 +23,15 @@ class SettingsDataSourceImpl(
 
     override fun getInputOnBottom(): Boolean {
         return preferences.getBoolean(INPUT_ON_BOTTOM, false)
+    }
+
+    override fun setConversationMode(active: Boolean) {
+        preferences.edit {
+            putBoolean(CONVERSATION_MODE, active)
+        }
+    }
+
+    override fun getConversationMode(): Boolean {
+        return preferences.getBoolean(CONVERSATION_MODE, false)
     }
 }
