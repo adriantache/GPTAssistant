@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -119,6 +120,7 @@ fun MessageView(
                         modifier = Modifier
                             .fillMaxHeight()
                             .fillMaxWidth(0.5f)
+                            .aspectRatio(1f)
                             .offset(x = 0.dp, y = (100 * progress.value).dp)
                             .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
                             .clip(CircleShape),
