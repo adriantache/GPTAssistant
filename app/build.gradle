@@ -11,22 +11,12 @@ android {
     namespace 'com.adriantache.gptassistant'
     compileSdk 34
 
-    def localProperties = new Properties()
-    def localPropertiesFile = rootProject.file('local.properties')
-    if (localPropertiesFile.exists()) {
-        localPropertiesFile.withReader {
-            localProperties.load(it)
-        }
-    }
-    def apiKey = localProperties['OPENAI_SDK_KEY']
-
     defaultConfig {
         applicationId "com.adriantache.gptassistant"
         minSdk 26
         targetSdk 34
         versionCode 1
         versionName "1.0"
-        buildConfigField('String', 'OPENAI_SDK_KEY', "\"" + apiKey + "\"")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

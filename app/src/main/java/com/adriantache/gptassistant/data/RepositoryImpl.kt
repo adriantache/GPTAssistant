@@ -4,17 +4,26 @@ import com.adriantache.gptassistant.data.firebase.FirebaseDatabaseImpl
 import com.adriantache.gptassistant.data.model.ChatMessage.Companion.toChatMessages
 import com.adriantache.gptassistant.data.model.OpenAiRequest
 import com.adriantache.gptassistant.data.retrofit.OpenAiApi
+import com.adriantache.gptassistant.domain.data.ApiKeyDataSource
 import com.adriantache.gptassistant.domain.data.Repository
 import com.adriantache.gptassistant.domain.model.Message
 import com.adriantache.gptassistant.domain.model.data.ConversationData
 
+private const val AUTH_HEADER_PREFIX = "Bearer "
+
 class RepositoryImpl(
     private val service: OpenAiApi,
+    private val apiKeyDataSource: ApiKeyDataSource,
     private val firebaseDatabase: FirebaseDatabaseImpl, // todo hide behind interface
 ) : Repository {
     override suspend fun getReply(conversation: ConversationData): Result<Message> {
+        val authHeader = apiKeyDataSource.apiKey?.let { AUTH_HEADER_PREFIX + it }
+
         val response = try {
-            service.getCompletions(OpenAiRequest(messages = conversation.toChatMessages()))
+            service.getCompletions(
+                authHeader = authHeader ?: return Result.failure(IllegalArgumentException("No API key!")),
+                request = OpenAiRequest(messages = conversation.toChatMessages()),
+            )
         } catch (e: Exception) {
             return Result.failure(e)
         }

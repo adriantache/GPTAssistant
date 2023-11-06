@@ -35,7 +35,7 @@ fun Activity.koinSetup() {
                 single { ConversationUseCases(get()) }
                 single { SettingsUseCases(get()) }
 
-                single<Repository> { RepositoryImpl(get(), get()) }
+                single<Repository> { RepositoryImpl(get(), get(), get()) }
                 single<SettingsDataSource> { SettingsDataSourceImpl(get()) }
                 single<ApiKeyDataSource> { ApiKeyDataSourceImpl(get()) }
 
