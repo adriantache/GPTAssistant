@@ -11,11 +11,4 @@ integrate with the widget in order to allow you to not even open the app to ask 
 for future reference.
 
 **Pending features:**
-- widget support
-- support for editing prompt (in case voice input was misheard)
-- improve Firebase database implementation (and ideally switch to something more complex that allows for pagination)
-- architecture rewrite to support states
-- Firebase login implementation to persist conversations across installs (and encrypted OpenAI API key, if manually input)
-- UI to manually input OpenAI API key on startup and logic to persist it
-- (eventually) much nicer design
-- (eventually) nicer formatting for ChatGPT output
+https://kanbanflow.com/board/ypq4WLq
