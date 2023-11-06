@@ -13,7 +13,12 @@ import androidx.glance.Button
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.appWidgetBackground
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
+import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import com.adriantache.gptassistant.domain.ConversationUseCases
@@ -38,6 +43,8 @@ class Widget : GlanceAppWidget(), KoinComponent {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
+//            val state = WidgetStateHelper.getState(currentState())
+
             var output by remember { mutableStateOf("GPT") }
 
             val recognizerState by audioRecognizer.state.collectAsState()
@@ -77,15 +84,24 @@ class Widget : GlanceAppWidget(), KoinComponent {
                 }
             }
 
-            MyContent(
-                output = output,
-                onClick = {
-                    output = "Speak"
-                    audioRecognizer.startListening()
-                }
-            )
+            Box(
+                modifier = GlanceModifier.fillMaxSize()
+//                    .background(ImageProvider(R.drawable.baseline_filter_alt_24))
+                    .cornerRadius(16.dp)
+                    .appWidgetBackground(),
+                contentAlignment = Alignment.Center,
+            ) {
+                MyContent(
+                    output = output,
+                    onClick = {
+                        output = "Speak"
+                        audioRecognizer.startListening()
+                    }
+                )
+            }
         }
     }
+
 
     @Composable
     private fun MyContent(
