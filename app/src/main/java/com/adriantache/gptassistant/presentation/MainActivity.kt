@@ -55,6 +55,7 @@ class MainActivity : ComponentActivity() {
 
             KeepScreenOn(screenState.isLoading)
 
+            // TODO: move this logic to use case, interacting with platform layer directly
             LaunchedEffect(events) {
                 when (val event = events?.value) {
                     is ConversationEvent.SpeakReply -> tts.speak(event.output)

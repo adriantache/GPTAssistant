@@ -3,11 +3,13 @@ package com.adriantache.gptassistant.domain
 import com.adriantache.gptassistant.domain.data.SettingsDataSource
 import com.adriantache.gptassistant.domain.model.ui.SettingsUi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class SettingsUseCases(
     private val storage: SettingsDataSource,
 ) {
-    val settings = MutableStateFlow(getSettings())
+    private val _settings = MutableStateFlow(getSettings())
+    val settings: StateFlow<SettingsUi> = _settings
 
     private fun getSettings(): SettingsUi {
         return SettingsUi(
@@ -21,12 +23,12 @@ class SettingsUseCases(
     private fun setInputOnBottom(isOnBottom: Boolean) {
         storage.setInputOnBottom(isOnBottom)
 
-        settings.value = getSettings()
+        _settings.value = getSettings()
     }
 
     private fun setConversationMode(active: Boolean) {
         storage.setConversationMode(active)
 
-        settings.value = getSettings()
+        _settings.value = getSettings()
     }
 }

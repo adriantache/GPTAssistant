@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -21,7 +22,6 @@ private const val ONE_DAY_MS = 1000 * 60 * 60 * 24
 private const val THREE_MINUTES_MS = 3 * 60 * 1000
 private val titleQuery = Message.UserMessage("Suggest a title for this conversation.")
 
-@Suppress("kotlin:S6305")
 class ConversationUseCases(
     private val repository: Repository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
@@ -34,8 +34,10 @@ class ConversationUseCases(
 
     private var lastRequestTime = 0L
 
-    val state: MutableStateFlow<ConversationUi> = MutableStateFlow(conversation.toUi(false))
-    val events: MutableStateFlow<Event<ConversationEvent>?> = MutableStateFlow(null)
+    private val _state: MutableStateFlow<ConversationUi> = MutableStateFlow(conversation.toUi(false))
+    val state: StateFlow<ConversationUi> = _state
+    private val _events: MutableStateFlow<Event<ConversationEvent>?> = MutableStateFlow(null)
+    val events: StateFlow<Event<ConversationEvent>?> = _events
 
     fun onInput(
         input: String,
@@ -69,12 +71,12 @@ class ConversationUseCases(
                     updateState()
 
                     if (fromSpeech) {
-                        events.value = ConversationEvent.SpeakReply(reply.content).asEvent()
+                        _events.value = ConversationEvent.SpeakReply(reply.content).asEvent()
                     }
                 }
                 .onFailure {
                     updateState()
-                    events.value = ConversationEvent.Error(it.message).asEvent()
+                    _events.value = ConversationEvent.Error(it.message).asEvent()
                 }
         }
     }
@@ -129,6 +131,6 @@ class ConversationUseCases(
     }
 
     private fun updateState(isLoading: Boolean = false) {
-        state.value = conversation.toUi(isLoading = isLoading)
+        _state.value = conversation.toUi(isLoading = isLoading)
     }
 }
