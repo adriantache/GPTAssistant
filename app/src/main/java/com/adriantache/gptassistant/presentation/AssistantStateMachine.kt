@@ -1,6 +1,5 @@
 package com.adriantache.gptassistant.presentation
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,11 +24,9 @@ fun AssistantStateMachine(
         }
     }
 
-    AnimatedContent(targetState = state, label = "contentAnimation") {
-        when (val localState = it) {
-            is AssistantState.Init -> Unit
-            is AssistantState.ApiKeyInput -> ApiKeyInputDialog(onSubmit = localState.onSubmit)
-            AssistantState.Conversation -> Conversation()
-        }
+    when (val localState = state) {
+        is AssistantState.Init -> Unit
+        is AssistantState.ApiKeyInput -> ApiKeyInputDialog(onSubmit = localState.onSubmit)
+        AssistantState.Conversation -> Conversation()
     }
 }
