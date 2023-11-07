@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.adriantache.gptassistant.data.model
 
 import kotlinx.serialization.Serializable

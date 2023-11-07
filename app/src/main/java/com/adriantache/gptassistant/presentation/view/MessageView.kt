@@ -8,11 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
@@ -100,9 +96,8 @@ fun MessageView(
 
             if (message is Loading) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
                 ) {
                     val progress = remember { Animatable(initialValue = 0f) }
 
@@ -118,10 +113,7 @@ fun MessageView(
 
                     WavesLoadingIndicator(
                         modifier = Modifier
-                            .fillMaxHeight()
-                            .fillMaxWidth(0.5f)
-                            .aspectRatio(1f)
-                            .offset(x = 0.dp, y = (100 * progress.value).dp)
+                            .requiredSize(160.dp)
                             .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
                             .clip(CircleShape),
                         progress = 0.7f,

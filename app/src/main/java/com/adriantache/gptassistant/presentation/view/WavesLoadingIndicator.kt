@@ -12,7 +12,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -35,6 +34,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.math.PI
@@ -53,8 +53,12 @@ fun WavesLoadingIndicator(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
     progress: Float,
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
-    BoxWithConstraints(modifier = modifier.offset(y = 16.dp), contentAlignment = Alignment.Center) {
+    BoxWithConstraints(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
         val constraintsWidth = maxWidth
         val constraintsHeight = maxHeight
         val density = LocalDensity.current
@@ -66,7 +70,7 @@ fun WavesLoadingIndicator(
             color,
             density
         ) {
-            value = withContext(Dispatchers.Default) {
+            value = withContext(dispatcher) {
                 createWavesShader(
                     width = with(density) { constraintsWidth.roundToPx() },
                     height = with(density) { constraintsHeight.roundToPx() },
