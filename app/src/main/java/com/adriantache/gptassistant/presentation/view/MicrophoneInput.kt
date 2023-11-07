@@ -68,15 +68,16 @@ fun MicrophoneInput(
         }
     }
 
-    var isWaitingForTtsSpeaking by remember { mutableStateOf(false) }
+    var isWaitingForTtsToFinish by remember { mutableStateOf(false) }
 
+    // TODO: remove this behaviour here and move it to use case; disable this for widget input?
     LaunchedEffect(isConversationMode, isSpeaking) {
         if (!isConversationMode) return@LaunchedEffect
 
         if (isSpeaking) {
-            isWaitingForTtsSpeaking = true
-        } else if (isWaitingForTtsSpeaking) {
-            isWaitingForTtsSpeaking = false
+            isWaitingForTtsToFinish = true
+        } else if (isWaitingForTtsToFinish) {
+            isWaitingForTtsToFinish = false
 
             delay(500)
 

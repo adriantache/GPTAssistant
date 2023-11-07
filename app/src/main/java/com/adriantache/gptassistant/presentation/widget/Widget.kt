@@ -5,9 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
 import androidx.glance.Button
 import androidx.glance.GlanceId
@@ -28,12 +26,13 @@ import com.adriantache.gptassistant.presentation.tts.AudioRecognizer.RecognizerS
 import com.adriantache.gptassistant.presentation.tts.AudioRecognizer.RecognizerState.Success
 import com.adriantache.gptassistant.presentation.tts.TtsHelper
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
 
+// TODO: update this after implementing proper states
 // TODO: improve error states, UI in general
-// TODO: continue with https://developer.android.com/jetpack/compose/glance/user-interaction
 class Widget : GlanceAppWidget(), KoinComponent {
     private val useCases: ConversationUseCases by inject()
     private val audioRecognizer: AudioRecognizer by inject()
@@ -41,24 +40,32 @@ class Widget : GlanceAppWidget(), KoinComponent {
     // TTS needs to be initialized before we ask it to speak, and that can take a bit of time...
     private val tts: TtsHelper = get()
 
+    private var output = "GPT"
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-//            val state = WidgetStateHelper.getState(currentState())
+            val scope = rememberCoroutineScope()
 
-            var output by remember { mutableStateOf("GPT") }
+            fun updateOutput(newOutput: String) {
+                output = newOutput
+
+                scope.launch {
+                    update(context, id)
+                }
+            }
 
             val recognizerState by audioRecognizer.state.collectAsState()
             LaunchedEffect(recognizerState) {
                 when (val recognizerStateValue = recognizerState) {
                     is Success -> {
                         recognizerStateValue.result.value?.let {
-                            output = "Wait"
+                            updateOutput("Wait")
                             useCases.onInput(it, fromWidget = true)
                             useCases.onSubmit(true)
                         }
                     }
 
-                    Failure -> output = "Fail"
+                    Failure -> updateOutput("Fail")
 
                     else -> Unit
                 }
@@ -68,14 +75,15 @@ class Widget : GlanceAppWidget(), KoinComponent {
             LaunchedEffect(events) {
                 when (val event = events?.value) {
                     is ConversationEvent.SpeakReply -> {
-                        output = "Listen"
+                        updateOutput("Listen")
+
                         tts.speak(event.output).collect {
                             if (!it) {
-                                output = "Done"
+                                updateOutput("Done")
 
                                 delay(1000)
 
-                                output = "GPT"
+                                updateOutput("GPT")
                             }
                         }
                     }
@@ -86,7 +94,6 @@ class Widget : GlanceAppWidget(), KoinComponent {
 
             Box(
                 modifier = GlanceModifier.fillMaxSize()
-//                    .background(ImageProvider(R.drawable.baseline_filter_alt_24))
                     .cornerRadius(16.dp)
                     .appWidgetBackground(),
                 contentAlignment = Alignment.Center,
@@ -94,14 +101,13 @@ class Widget : GlanceAppWidget(), KoinComponent {
                 MyContent(
                     output = output,
                     onClick = {
-                        output = "Speak"
+                        updateOutput("Speak")
                         audioRecognizer.startListening()
                     }
                 )
             }
         }
     }
-
 
     @Composable
     private fun MyContent(
