@@ -1,6 +1,6 @@
 package com.adriantache.gptassistant.di
 
-import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
@@ -25,7 +25,7 @@ import retrofit2.Retrofit
 
 private const val preferencesFile = "prefs"
 
-fun Activity.koinSetup() {
+fun Application.koinSetup() {
     startKoin {
         androidContext(this@koinSetup)
 
