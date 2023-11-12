@@ -12,3 +12,6 @@ for future reference.
 
 **Pending features:**
 https://kanbanflow.com/board/ypq4WLq
+
+**Proudly part of Backdrop Build v2**
+https://pbs.twimg.com/media/F9wt1_XWAAAMjRv?format=jpg&name=small
