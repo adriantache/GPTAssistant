@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -104,7 +105,7 @@ fun PreviousConversationsDialog(
                 .padding(16.dp)
                 .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item {
                 Column {
@@ -157,7 +158,7 @@ fun PreviousConversationsDialog(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            items(conversations) {
+            items(conversations, key = { it.id }) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -187,13 +188,20 @@ fun PreviousConversationsDialog(
                         )
 
                         if (it != newConversation && it.startedAt != 0L) {
-                            val date = Instant.ofEpochMilli(it.startedAt).atZone(ZoneId.systemDefault())
+                            val date = remember {
+                                Instant.ofEpochMilli(it.startedAt).atZone(ZoneId.systemDefault())
+                            }
                             val formatter = DateTimeFormatter.RFC_1123_DATE_TIME
+                            val formattedDate by remember {
+                                derivedStateOf {
+                                    formatter.format(date)
+                                }
+                            }
 
                             Spacer(Modifier.height(8.dp))
 
                             Text(
-                                text = formatter.format(date),
+                                text = formattedDate,
                                 style = MaterialTheme.typography.labelSmall,
                                 fontStyle = Italic,
                                 color = LocalContentColor.current.copy(alpha = 0.7f)
