@@ -10,6 +10,7 @@ import com.adriantache.gptassistant.domain.model.Message
 import com.adriantache.gptassistant.domain.model.data.ConversationData
 
 private const val AUTH_HEADER_PREFIX = "Bearer "
+private const val HISTORY_ID_KEY = "HISTORY_ID_KEY"
 
 class RepositoryImpl(
     private val service: OpenAiApi,
