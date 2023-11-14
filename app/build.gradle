@@ -1,8 +1,9 @@
 plugins {
     id 'com.android.application'
-    id 'com.google.devtools.ksp' version '1.9.10-1.0.13'
+    id 'com.google.devtools.ksp' version '1.9.20-1.0.14'
     id 'com.google.gms.google-services'
     id 'kotlinx-serialization'
+    id("com.google.firebase.crashlytics")
 }
 
 apply plugin: 'kotlin-android'
@@ -42,7 +43,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.5.3'
+        kotlinCompilerExtensionVersion '1.5.4'
     }
     packagingOptions {
         resources {
@@ -73,14 +74,19 @@ dependencies {
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1'
     implementation "com.squareup.okhttp3:okhttp:4.11.0"
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.8.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.11.0'
 
     implementation "com.google.accompanist:accompanist-permissions:0.33.0-alpha"
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
-    implementation 'com.google.firebase:firebase-common-ktx'
-    implementation("com.google.firebase:firebase-database-ktx")
+    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
+    implementation 'com.google.firebase:firebase-common'
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
+
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     implementation "io.insert-koin:koin-android:3.3.3"
     implementation "io.insert-koin:koin-androidx-compose:3.4.2"
