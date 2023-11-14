@@ -1,6 +1,8 @@
 package com.adriantache.gptassistant.data.firebase
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
+import com.adriantache.gptassistant.data.util.getString
 import com.adriantache.gptassistant.domain.model.data.ConversationData
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.getValue
@@ -12,7 +14,8 @@ import kotlinx.serialization.json.Json
 
 private const val DATABASE_URL = "https://chatgpt-44830-default-rtdb.europe-west1.firebasedatabase.app/"
 
-//private const val ID_KEY = "ID_KEY" todo migrate old conversations to new ID and delete this key
+// TODO: remove this key once all users are on new version
+private const val OLD_ID_KEY = "ID_KEY"
 const val ID_KEY = "HISTORY_ID_KEY" // TODO: improve this mechanism
 
 // TODO: implement this properly
@@ -23,7 +26,27 @@ class FirebaseDatabaseImpl(
     private var myRef: DatabaseReference? = getDatabase()
         get() = field ?: getDatabase()
 
+    // TODO: remove this method once all users are on new version
+    private suspend fun migrateConversations() {
+        if (!preferences.contains(OLD_ID_KEY)) return
+
+        val oldDatabase = getDatabase(OLD_ID_KEY)
+        val oldContents = getDatabaseContents(oldDatabase)
+
+        val newContents = getDatabaseContents()
+
+        val allConversations = oldContents + newContents
+
+        updateDatabase(allConversations.distinct())
+
+        preferences.edit {
+            remove(OLD_ID_KEY)
+        }
+    }
+
     suspend fun saveConversation(conversation: ConversationData) {
+        migrateConversations()
+
         val currentDatabase = getDatabaseContents()
         val updatedContents = getDatabaseContents().map {
             if (it.id != conversation.id) return@map it
@@ -41,6 +64,8 @@ class FirebaseDatabaseImpl(
     }
 
     suspend fun getConversations(): List<ConversationData> {
+        migrateConversations()
+
         return getDatabaseContents()
     }
 
@@ -51,8 +76,10 @@ class FirebaseDatabaseImpl(
         updateDatabase(updatedState)
     }
 
-    private suspend fun getDatabaseContents(): List<ConversationData> {
-        val json = myRef?.get()?.await()?.getValue<String>() ?: return emptyList()
+    private suspend fun getDatabaseContents(
+        ref: DatabaseReference? = myRef,
+    ): List<ConversationData> {
+        val json = ref?.get()?.await()?.getValue<String>() ?: return emptyList()
 
         return Json.decodeFromString<List<ConversationData>>(json)
     }
@@ -63,10 +90,8 @@ class FirebaseDatabaseImpl(
         myRef?.setValue(json)
     }
 
-    private fun getDatabase(): DatabaseReference? {
+    private fun getDatabase(id: String? = preferences.getString(ID_KEY)): DatabaseReference? {
         // If id is missing, we assume user chose not to save history.
-        val id = preferences.getString(ID_KEY, null)
-
         return id?.let { database.getReference("message-$it") }
     }
 }
