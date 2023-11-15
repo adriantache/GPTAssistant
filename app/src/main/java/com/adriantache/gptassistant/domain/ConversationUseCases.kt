@@ -20,7 +20,7 @@ import java.util.UUID
 
 private const val ONE_DAY_MS = 1000 * 60 * 60 * 24
 private const val THREE_MINUTES_MS = 3 * 60 * 1000
-private val titleQuery = Message.UserMessage("Suggest a title for this conversation.")
+private val titleQuery = Message.UserMessage("Suggest a title for this conversation, excluding this message.")
 
 class ConversationUseCases(
     private val repository: Repository,
@@ -92,7 +92,7 @@ class ConversationUseCases(
         if (conversation.title == null) {
             val title = repository.getReply(
                 conversation.copy(messages = conversation.messages + titleQuery).toData()
-            ).getOrNull()?.content
+            ).getOrNull()?.content?.replace("\"", "")
                 ?: UUID.randomUUID().toString()
 
             conversation = conversation.copy(title = title)
