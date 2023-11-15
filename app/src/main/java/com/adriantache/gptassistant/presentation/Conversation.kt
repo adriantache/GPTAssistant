@@ -1,5 +1,10 @@
 package com.adriantache.gptassistant.presentation
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -11,11 +16,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.unit.IntOffset
 import com.adriantache.gptassistant.domain.ConversationUseCases
 import com.adriantache.gptassistant.domain.SettingsUseCases
 import com.adriantache.gptassistant.domain.model.ConversationEvent
 import com.adriantache.gptassistant.presentation.tts.TtsHelper
-import com.adriantache.gptassistant.presentation.view.ClearConversationDialog
 import com.adriantache.gptassistant.presentation.view.ConversationView
 import com.adriantache.gptassistant.presentation.view.PreviousConversationsDialog
 import com.adriantache.gptassistant.presentation.view.SettingsScreen
@@ -29,7 +34,6 @@ fun Conversation(
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
 
-    var showResetConfirmation: Boolean by remember { mutableStateOf(false) }
     var showPreviousConversationsDialog: Boolean by remember { mutableStateOf(false) }
     var showSettings: Boolean by remember { mutableStateOf(false) }
     var showErrorMessage: String? by remember { mutableStateOf(null) }
@@ -54,41 +58,41 @@ fun Conversation(
         }
     }
 
-    ConversationView(
-        conversation = screenState.messages,
-        isLoading = screenState.isLoading,
-        isTtsSpeaking = isTtsSpeaking,
-        input = screenState.latestInput,
-        onInput = useCases::onInput,
-        onSubmit = { fromSpeech ->
-            keyboard?.hide()
+    @Suppress("NAME_SHADOWING")
+    AnimatedContent(
+        targetState = screenState,
+        label = "",
+        transitionSpec = {
+            slideIn(animationSpec = spring(), initialOffset = { IntOffset(it.width, 0) })
+                .togetherWith(slideOut(animationSpec = spring(), targetOffset = { IntOffset(-it.width, -it.height) }))
+        }
+    ) { screenState ->
+        ConversationView(
+            conversation = screenState,
+            isLoading = screenState.isLoading,
+            isTtsSpeaking = isTtsSpeaking,
+            input = screenState.latestInput,
+            onInput = useCases::onInput,
+            onSubmit = { fromSpeech ->
+                keyboard?.hide()
 
-            useCases.onSubmit(fromSpeech = fromSpeech)
-        },
-        stopTTS = { tts.stop() },
-        canResetConversation = screenState.canResetConversation,
-        onResetConversation = { showResetConfirmation = true },
-        onLoadPreviousConversations = { showPreviousConversationsDialog = true },
-        onShowSettings = { showSettings = true },
-        isInputOnBottom = settings.isInputOnBottom,
-        isConversationMode = settings.isConversationMode,
-    )
+                useCases.onSubmit(fromSpeech = fromSpeech)
+            },
+            stopTTS = { tts.stop() },
+            canResetConversation = screenState.canResetConversation,
+            onResetConversation = { useCases.onResetConversation() },
+            onLoadPreviousConversations = { showPreviousConversationsDialog = true },
+            onShowSettings = { showSettings = true },
+            isInputOnBottom = settings.isInputOnBottom,
+            isConversationMode = settings.isConversationMode,
+        )
+    }
 
     if (showPreviousConversationsDialog) {
         PreviousConversationsDialog(
             getConversationHistory = useCases::getConversations,
             onLoadConversation = useCases::onLoadConversation,
             onDismiss = { showPreviousConversationsDialog = false }
-        )
-    }
-
-    if (showResetConfirmation) {
-        ClearConversationDialog(
-            onConfirm = {
-                useCases.onResetConversation()
-                showResetConfirmation = false
-            },
-            onDismiss = { showResetConfirmation = false },
         )
     }
 
