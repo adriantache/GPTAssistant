@@ -160,6 +160,7 @@ fun ConversationView(
                                     Text(
                                         text = "Conversation History",
                                         color = MaterialTheme.colorScheme.onSecondary,
+                                        style = MaterialTheme.typography.bodyLarge,
                                     )
                                 }
                             }

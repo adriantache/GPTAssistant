@@ -54,12 +54,13 @@ fun MessageView(
         is UserMessage,
         is GptMessage,
         is AdminMessage,
-        -> modifier.fillMaxWidth(0.75f)
+        -> modifier.fillMaxWidth(0.8f)
 
         is Loading -> modifier
             .fillMaxWidth()
             .requiredHeight(200.dp)
     }
+    val fontStyle = if (message is UserMessage) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodyMedium
 
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
@@ -85,12 +86,12 @@ fun MessageView(
         Box(
             modifier = finalModifier
                 .background(bgColor, OutlinedTextFieldDefaults.shape)
-                .padding(8.dp),
+                .padding(12.dp),
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = message.content,
-                style = MaterialTheme.typography.bodyMedium,
+                style = fontStyle,
                 color = textColor,
             )
 
