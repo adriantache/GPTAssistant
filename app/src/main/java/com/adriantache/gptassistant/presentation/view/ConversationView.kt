@@ -1,7 +1,6 @@
 package com.adriantache.gptassistant.presentation.view
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -56,7 +55,6 @@ fun ConversationView(
     onResetConversation: () -> Unit,
     onLoadPreviousConversations: () -> Unit,
     onShowSettings: () -> Unit,
-    isInputOnBottom: Boolean,
     isConversationMode: Boolean,
 ) {
     val lazyListState = rememberLazyListState()
@@ -121,28 +119,14 @@ fun ConversationView(
 
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(all = 16.dp),
+                .fillMaxWidth(),
         ) {
-            AnimatedVisibility(!isInputOnBottom) {
-                InputRow(
-                    isLoading = isLoading,
-                    stopTts = stopTTS,
-                    isTtsSpeaking = isTtsSpeaking,
-                    input = input,
-                    onInput = onInput,
-                    onSubmit = onSubmit,
-                    isConversationMode = isConversationMode,
-                )
-            }
-
-            AnimatedVisibility(!isInputOnBottom) {
-                Spacer(Modifier.height(16.dp))
-            }
+            Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
                     .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 state = lazyListState,
@@ -162,10 +146,22 @@ fun ConversationView(
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
                                 onClick = onLoadPreviousConversations,
                             ) {
-                                Text(
-                                    text = "Load previous conversations",
-                                    color = MaterialTheme.colorScheme.onSecondary,
-                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Icon(
+                                        painterResource(id = R.drawable.baseline_history_24),
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSecondary,
+                                    )
+
+                                    Spacer(modifier = Modifier.width(8.dp))
+
+                                    Text(
+                                        text = "Conversation History",
+                                        color = MaterialTheme.colorScheme.onSecondary,
+                                    )
+                                }
                             }
 
                             Spacer(Modifier.width(8.dp))
@@ -194,21 +190,17 @@ fun ConversationView(
                 }
             }
 
-            AnimatedVisibility(isInputOnBottom) {
-                Spacer(Modifier.height(8.dp))
-            }
+            Spacer(Modifier.height(8.dp))
 
-            AnimatedVisibility(isInputOnBottom) {
-                InputRow(
-                    isLoading = isLoading,
-                    stopTts = stopTTS,
-                    isTtsSpeaking = isTtsSpeaking,
-                    input = input,
-                    onInput = onInput,
-                    onSubmit = onSubmit,
-                    isConversationMode = isConversationMode,
-                )
-            }
+            ConversationInput(
+                isLoading = isLoading,
+                stopTTS = stopTTS,
+                isTtsSpeaking = isTtsSpeaking,
+                input = input,
+                onInput = onInput,
+                onSubmit = onSubmit,
+                isConversationMode = isConversationMode,
+            )
         }
     }
 }

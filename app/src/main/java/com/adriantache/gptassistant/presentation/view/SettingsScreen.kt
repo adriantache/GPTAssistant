@@ -41,13 +41,7 @@ fun SettingsScreen(
             )
 
             SettingsRow(
-                text = "Show input on the bottom of the screen.",
-                checked = settings.isInputOnBottom,
-                onChecked = settings.setInputOnBottom,
-            )
-
-            SettingsRow(
-                text = "Hide text input and immediately activate speech recognition after TTS stops speaking.",
+                text = "Enable conversation mode",
                 checked = settings.isConversationMode,
                 onChecked = settings.setConversationMode,
             )
@@ -60,10 +54,8 @@ fun SettingsScreen(
 fun SettingsScreenPreview() {
     SettingsScreen(
         settings = SettingsUi(
-            isInputOnBottom = true,
             isConversationMode = false,
             setConversationMode = {},
-            setInputOnBottom = {},
         )
     ) {
     }

@@ -117,8 +117,9 @@ class ConversationUseCases(
             conversations = conversations.filter {
                 val isAfterStartDate = dateRangeStart == null || it.startedAt >= dateRangeStart
                 val isBeforeEndDate = dateRangeEnd == null || it.startedAt <= (dateRangeEnd + ONE_DAY_MS)
-                val containsSearch =
-                    searchText == null || searchText.length < 2 || it.messages.any { message -> message.content.contains(searchText) }
+                val containsSearch = searchText == null ||
+                        searchText.length < 2 ||
+                        it.messages.any { message -> message.content.contains(searchText) }
 
                 isAfterStartDate && isBeforeEndDate && containsSearch
             }.map { it.toUi(false) },

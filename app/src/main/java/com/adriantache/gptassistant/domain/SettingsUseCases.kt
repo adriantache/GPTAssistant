@@ -13,17 +13,9 @@ class SettingsUseCases(
 
     private fun getSettings(): SettingsUi {
         return SettingsUi(
-            isInputOnBottom = storage.getInputOnBottom(),
-            setInputOnBottom = ::setInputOnBottom,
             isConversationMode = storage.getConversationMode(),
             setConversationMode = ::setConversationMode,
         )
-    }
-
-    private fun setInputOnBottom(isOnBottom: Boolean) {
-        storage.setInputOnBottom(isOnBottom)
-
-        _settings.value = getSettings()
     }
 
     private fun setConversationMode(active: Boolean) {
