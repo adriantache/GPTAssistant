@@ -8,6 +8,7 @@ import com.adriantache.gptassistant.domain.data.SettingsDataSource
 
 private const val PREFERENCES_FILE = "preferences"
 private const val CONVERSATION_MODE = "CONVERSATION_MODE"
+private const val ARE_CONVERSATIONS_SAVED = "ARE_CONVERSATIONS_SAVED"
 
 class SettingsDataSourceImpl(
     context: Context,
@@ -16,6 +17,18 @@ class SettingsDataSourceImpl(
 
     init {
         deleteOldKeys()
+    }
+
+    override fun setAreConversationsSaved(active: Boolean) {
+        preferences.edit {
+            putBoolean(ARE_CONVERSATIONS_SAVED, active)
+        }
+    }
+
+    override fun getAreConversationsSaved(): Boolean? {
+        if (!preferences.contains(ARE_CONVERSATIONS_SAVED)) return null
+
+        return preferences.getBoolean(ARE_CONVERSATIONS_SAVED, false)
     }
 
     override fun setConversationMode(active: Boolean) {

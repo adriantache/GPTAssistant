@@ -32,7 +32,6 @@ fun AssistantStateMachine(
         is AssistantState.ApiKeyInput -> ApiKeyInputDialog(onSubmit = localState.onSubmit)
         is AssistantState.SaveConversationHistory -> SaveHistoryDialog(
             onSaveGoogle = localState.onSaveGoogle,
-            onSaveLocally = localState.onSaveLocally,
             onRejectSaving = localState.onRejectSaving,
         )
 

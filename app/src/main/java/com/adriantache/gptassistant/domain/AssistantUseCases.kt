@@ -1,8 +1,6 @@
 package com.adriantache.gptassistant.domain
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
-import com.adriantache.gptassistant.data.firebase.ID_KEY
+import com.adriantache.gptassistant.data.firebase.FirebaseDatabaseImpl
 import com.adriantache.gptassistant.domain.data.ApiKeyDataSource
 import com.adriantache.gptassistant.domain.model.AssistantState
 import com.adriantache.gptassistant.domain.model.AssistantState.ApiKeyInput
@@ -14,14 +12,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.util.UUID
 
 // TODO: migrate all main functionality here
 // TODO: move this class behind an interface
 // TODO: clean up sharedprefs usage in the entire project
 class AssistantUseCases(
     private val apiKeyDataSource: ApiKeyDataSource,
-    private val sharedPreferences: SharedPreferences,
+    private val settingsUseCases: SettingsUseCases,
+    private val firebaseDatabaseImpl: FirebaseDatabaseImpl,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
     private val scope = CoroutineScope(dispatcher)
@@ -31,12 +29,14 @@ class AssistantUseCases(
 
     private fun onInit() {
         val noApiKey = apiKeyDataSource.apiKey.isNullOrBlank()
+        val shouldShowConversationSaveOptions = settingsUseCases.settings.value.areConversationsSaved == null ||
+                (settingsUseCases.settings.value.areConversationsSaved == true && !firebaseDatabaseImpl.hasId())
 
         when {
             noApiKey -> _states.value = ApiKeyInput(::onApiKeyInput)
-            !sharedPreferences.contains(ID_KEY) -> _states.value = SaveConversationHistory(
+
+            shouldShowConversationSaveOptions -> _states.value = SaveConversationHistory(
                 onSaveGoogle = ::onSaveGoogle,
-                onSaveLocally = ::onSaveLocally,
                 onRejectSaving = ::onRejectSaving,
             )
 
@@ -44,25 +44,15 @@ class AssistantUseCases(
         }
     }
 
-    private fun onSaveGoogle(key: String) {
-        sharedPreferences.edit(commit = true) {
-            putString(ID_KEY, key)
-        }
-        onInit()
-    }
+    private fun onSaveGoogle() {
+        settingsUseCases.setAreConversationsSaved(true)
 
-    private fun onSaveLocally() {
-        val key = UUID.randomUUID().toString()
-        sharedPreferences.edit {
-            putString(ID_KEY, key)
-        }
         onInit()
     }
 
     private fun onRejectSaving() {
-        sharedPreferences.edit {
-            remove(ID_KEY)
-        }
+        settingsUseCases.setAreConversationsSaved(false)
+
         onInit()
     }
 

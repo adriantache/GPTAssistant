@@ -24,7 +24,7 @@ private const val GCP_ID = "663313759833-8th7381j19pjoitd0rgk66mpoph8iki7.apps.g
 @Composable
 fun FirebaseAuthButton(
     modifier: Modifier = Modifier,
-    onGotId: (String) -> Unit,
+    onGotId: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -71,14 +71,19 @@ private fun firebaseAuthWithGoogle(
     context: Context,
     idToken: String?,
     mAuth: FirebaseAuth,
-    onGotId: (String) -> Unit,
+    onGotId: () -> Unit,
 ) {
     val credential = GoogleAuthProvider.getCredential(idToken, null)
     mAuth.signInWithCredential(credential)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val user = mAuth.currentUser
-                onGotId(user?.uid.orEmpty())
+
+                if (user?.uid != null) {
+                    onGotId()
+                } else {
+                    Toast.makeText(context, "Authentication Failed.", Toast.LENGTH_SHORT).show()
+                }
             } else {
                 Toast.makeText(context, "Authentication Failed.", Toast.LENGTH_SHORT).show()
             }

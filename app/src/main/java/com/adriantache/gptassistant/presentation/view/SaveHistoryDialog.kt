@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -26,8 +25,7 @@ import com.adriantache.gptassistant.presentation.auth.FirebaseAuthButton
 
 @Composable
 fun SaveHistoryDialog(
-    onSaveGoogle: (String) -> Unit,
-    onSaveLocally: () -> Unit,
+    onSaveGoogle: () -> Unit,
     onRejectSaving: () -> Unit,
 ) {
     Dialog(
@@ -67,41 +65,22 @@ fun SaveHistoryDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .requiredHeight(48.dp),
-                    onGotId = onSaveGoogle,
+                    onGotId = { onSaveGoogle() },
                 )
             }
-
-            Spacer(Modifier.height(4.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .requiredHeight(48.dp),
-                    onClick = { onSaveLocally() }) {
-                    Text(text = "Only save conversations locally")
-                }
-            }
-
-            Spacer(Modifier.height(4.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
             ) {
                 TextButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .requiredHeight(48.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     onClick = { onRejectSaving() }) {
                     Text(text = "Don't save conversations")
                 }
             }
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(16.dp))
         }
     }
 }
@@ -110,5 +89,5 @@ fun SaveHistoryDialog(
 @Preview()
 @Composable
 private fun SaveHistoryDialogPreview() {
-    SaveHistoryDialog({}, {}, {})
+    SaveHistoryDialog({}, {})
 }

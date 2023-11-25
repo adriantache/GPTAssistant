@@ -5,8 +5,7 @@ sealed interface AssistantState {
     data class ApiKeyInput(val onSubmit: (String) -> Unit) : AssistantState
 
     data class SaveConversationHistory(
-        val onSaveGoogle: (String) -> Unit,
-        val onSaveLocally: () -> Unit,
+        val onSaveGoogle: () -> Unit,
         val onRejectSaving: () -> Unit,
     ) : AssistantState
 

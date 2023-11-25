@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,9 +23,9 @@ fun SettingsScreen(
     settings: SettingsUi,
     onDismiss: () -> Unit,
 ) {
-    AlertDialog(
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+    BasicAlertDialog(
         onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Column(
             Modifier
@@ -38,6 +38,12 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 text = "Settings",
                 style = MaterialTheme.typography.headlineSmall,
+            )
+
+            SettingsRow(
+                text = "Save conversations with Google",
+                checked = settings.areConversationsSaved ?: false,
+                onChecked = settings.setAreConversationsSaved,
             )
 
             SettingsRow(
@@ -56,6 +62,8 @@ fun SettingsScreenPreview() {
         settings = SettingsUi(
             isConversationMode = false,
             setConversationMode = {},
+            areConversationsSaved = true,
+            setAreConversationsSaved = {},
         )
     ) {
     }

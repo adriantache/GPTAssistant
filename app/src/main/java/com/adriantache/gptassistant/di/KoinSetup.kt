@@ -31,7 +31,7 @@ fun Application.koinSetup() {
 
         modules(
             module {
-                single { AssistantUseCases(get(), get()) }
+                single { AssistantUseCases(get(), get(), get()) }
                 single { ConversationUseCases(get()) }
                 single { SettingsUseCases(get()) }
 

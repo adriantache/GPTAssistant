@@ -13,14 +13,26 @@ class SettingsUseCases(
 
     private fun getSettings(): SettingsUi {
         return SettingsUi(
+            areConversationsSaved = storage.getAreConversationsSaved(),
+            setAreConversationsSaved = ::setAreConversationsSaved,
             isConversationMode = storage.getConversationMode(),
             setConversationMode = ::setConversationMode,
         )
     }
 
+    internal fun setAreConversationsSaved(active: Boolean) {
+        storage.setAreConversationsSaved(active)
+
+        refreshSettings()
+    }
+
     private fun setConversationMode(active: Boolean) {
         storage.setConversationMode(active)
 
+        refreshSettings()
+    }
+
+    private fun refreshSettings() {
         _settings.value = getSettings()
     }
 }
