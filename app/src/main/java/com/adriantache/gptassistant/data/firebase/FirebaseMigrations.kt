@@ -43,17 +43,20 @@ suspend fun databaseStructureMigration(
     preferences: SharedPreferences,
     database: FirebaseDatabase,
 ) {
+    // Only perform migration if cloud storage is enabled.
+    if (!preferences.getBoolean("ARE_CONVERSATIONS_SAVED", false)) return
+
     val newKey = preferences.getString(ID_KEY, null)
     val currentDatabaseRef = getDatabase(newKey, database)
     val currentContents = getDatabaseContents(currentDatabaseRef)
 
-    if (currentContents.isEmpty()) return
+    if (currentContents.isEmpty()) return // Assume migration was already performed.
 
-    val updatedContents = UserModel(conversations = currentContents)
-
-    val userId = FirebaseAuth.getInstance().uid
+    val userId = FirebaseAuth.getInstance().uid ?: return
     val newRef = database.getReference("users/$userId")
+    val newContents = getNewDatabaseContents(newRef)
 
+    val updatedContents = UserModel(conversations = (currentContents + newContents).distinct())
     val json = Json.encodeToString(updatedContents)
 
     newRef.setValue(json)
@@ -75,6 +78,14 @@ private suspend fun getDatabaseContents(
     val json = ref?.get()?.await()?.getValue<String>() ?: return emptyList()
 
     return Json.decodeFromString<List<ConversationData>>(json)
+}
+
+private suspend fun getNewDatabaseContents(
+    ref: DatabaseReference?,
+): List<ConversationData> {
+    val json = ref?.get()?.await()?.getValue<String>()?.takeUnless { it.isEmpty() } ?: return emptyList()
+
+    return Json.decodeFromString<UserModel>(json).conversations
 }
 
 private fun updateDatabase(

@@ -71,13 +71,14 @@ class FirebaseDatabaseImpl(
     private suspend fun getDatabaseContents(
         ref: DatabaseReference? = myRef,
     ): List<ConversationData> {
-        val json = ref?.get()?.await()?.getValue<String>() ?: return emptyList()
+        val json = ref?.get()?.await()?.getValue<String>()?.takeUnless { it.isEmpty() } ?: return emptyList()
 
         return Json.decodeFromString<UserModel>(json).conversations
     }
 
     private fun updateDatabase(updatedContents: List<ConversationData>) {
-        val json = Json.encodeToString(updatedContents)
+        val userModel = UserModel(conversations = updatedContents)
+        val json = Json.encodeToString(userModel)
 
         myRef?.setValue(json)
     }
