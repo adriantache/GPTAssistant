@@ -38,6 +38,7 @@ fun MicrophoneInput(
     onResult: (String) -> Unit,
 ) {
     var isListening by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
     var amplitudePercent by remember { mutableFloatStateOf(0f) }
 
     val microphonePermission = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
@@ -114,7 +115,10 @@ fun MicrophoneInput(
         exit = fadeOut(),
     ) {
         IconButton(
-            onClick = { startRecognizing() }
+            onClick = {
+                isLoading = true
+                startRecognizing()
+            }
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_mic_24),
