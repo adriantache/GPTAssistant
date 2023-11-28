@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.adriantache.gptassistant.R
 import com.adriantache.gptassistant.domain.model.ui.ConversationUi
@@ -96,6 +97,8 @@ fun ConversationView(
                     text = conversation.title ?: "New conversation",
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onPrimary,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -121,7 +124,7 @@ fun ConversationView(
             modifier = Modifier
                 .fillMaxWidth(),
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(Modifier.height(8.dp))
 
             LazyColumn(
                 modifier = Modifier
