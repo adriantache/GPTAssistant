@@ -136,52 +136,69 @@ fun ConversationView(
             ) {
                 if (conversation.messages.isEmpty()) {
                     item {
-                        Row(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Button(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .requiredHeight(48.dp),
-                                shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
-                                onClick = onLoadPreviousConversations,
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Row(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
+                                Button(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .requiredHeight(48.dp),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                                    onClick = onLoadPreviousConversations,
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Icon(
+                                            painterResource(id = R.drawable.baseline_history_24),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.onSecondary,
+                                        )
+
+                                        Spacer(modifier = Modifier.width(8.dp))
+
+                                        Text(
+                                            text = "Conversation History",
+                                            color = MaterialTheme.colorScheme.onSecondary,
+                                            style = MaterialTheme.typography.bodyLarge,
+                                        )
+                                    }
+                                }
+
+                                Spacer(Modifier.width(8.dp))
+
+                                Button(
+                                    modifier = Modifier.requiredHeight(48.dp),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                                    onClick = onShowSettings,
                                 ) {
                                     Icon(
-                                        painterResource(id = R.drawable.baseline_history_24),
+                                        painterResource(id = R.drawable.baseline_settings_24),
                                         contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSecondary,
-                                    )
-
-                                    Spacer(modifier = Modifier.width(8.dp))
-
-                                    Text(
-                                        text = "Conversation History",
-                                        color = MaterialTheme.colorScheme.onSecondary,
-                                        style = MaterialTheme.typography.bodyLarge,
+                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
                                     )
                                 }
                             }
+                        }
 
-                            Spacer(Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                            Button(
-                                modifier = Modifier.requiredHeight(48.dp),
-                                shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-                                onClick = onShowSettings,
-                            ) {
-                                Icon(
-                                    painterResource(id = R.drawable.baseline_settings_24),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                            }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
+                                .padding(16.dp),
+                        ) {
+                            Text(
+                                text = "Welcome to GPT Assistant. Use the voice input or keyboard buttons on the bottom to input your query.\n\n" +
+                                        "Use the buttons above to search through previous conversations or update settings.",
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            )
                         }
                     }
                 } else {
