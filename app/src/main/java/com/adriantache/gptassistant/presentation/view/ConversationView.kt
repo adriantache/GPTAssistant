@@ -62,6 +62,7 @@ fun ConversationView(
     onLoadPreviousConversations: () -> Unit,
     onShowSettings: () -> Unit,
     isConversationMode: Boolean,
+    onDuplicate: () -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -217,6 +218,7 @@ fun ConversationView(
                                 onEditMessage(it)
                                 isKeyboardExpanded = true
                             },
+                            onDuplicate = onDuplicate,
                         )
                     }
                 }

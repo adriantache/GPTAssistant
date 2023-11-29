@@ -139,4 +139,9 @@ class ConversationUseCases(
         conversation = conversation.editLastUserMessage(message)
         updateState()
     }
+
+    fun onDuplicate() {
+        conversation = conversation.duplicate()
+        updateState()
+    }
 }

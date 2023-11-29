@@ -43,6 +43,7 @@ fun MessageView(
     modifier: Modifier = Modifier,
     message: Message,
     onEditMessage: (Message) -> Unit,
+    onDuplicate: () -> Unit,
 ) {
     val bgColor = when (message) {
         is UserMessage -> MaterialTheme.colorScheme.primary
@@ -72,6 +73,13 @@ fun MessageView(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (message is UserMessage) {
+            IconButton(
+                modifier = Modifier.requiredSize(48.dp),
+                onClick = onDuplicate,
+            ) {
+                Icon(painter = painterResource(id = R.drawable.baseline_content_copy_24), contentDescription = "Duplicate")
+            }
+
             IconButton(
                 modifier = Modifier.requiredSize(48.dp),
                 onClick = {

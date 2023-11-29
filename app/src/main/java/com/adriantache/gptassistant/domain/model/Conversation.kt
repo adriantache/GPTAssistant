@@ -44,4 +44,8 @@ data class Conversation(
             latestInput = message.content,
         )
     }
+
+    fun duplicate(): Conversation {
+        return this.copy(id = UUID.randomUUID().toString(), title = null)
+    }
 }

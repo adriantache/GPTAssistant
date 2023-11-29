@@ -69,7 +69,8 @@ fun Conversation(
         onLoadPreviousConversations = { showPreviousConversationsDialog = true },
         onShowSettings = { showSettings = true },
         isConversationMode = settings.isConversationMode,
-        onEditMessage = { useCases.onEditMessage(it) }
+        onEditMessage = { useCases.onEditMessage(it) },
+        onDuplicate = { useCases.onDuplicate() },
     )
 
     if (showPreviousConversationsDialog) {
