@@ -14,10 +14,6 @@ data class Conversation(
     val canSubmit = latestInput.isNotBlank()
 
     fun onInput(input: String): Conversation {
-        if (input.isBlank()) {
-            return this.copy(errorMessage = "Please input something.")
-        }
-
         return this.copy(
             messages = messages,
             latestInput = input,
