@@ -1,5 +1,6 @@
 package com.adriantache.gptassistant.presentation.view
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -17,10 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
@@ -40,8 +37,12 @@ fun ConversationInput(
     onSubmit: (fromSpeech: Boolean) -> Unit,
     stopTTS: () -> Unit,
     isConversationMode: Boolean,
+    isKeyboardExpanded: Boolean,
+    onExpandKeyboard: () -> Unit,
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
+    BackHandler(isKeyboardExpanded) {
+        onExpandKeyboard()
+    }
 
     Box(
         modifier = modifier
@@ -50,8 +51,8 @@ fun ConversationInput(
         contentAlignment = Alignment.BottomCenter,
     ) {
         KeyboardPopup(
-            isExpanded = isExpanded,
-            onExpand = { isExpanded = !isExpanded },
+            isExpanded = isKeyboardExpanded,
+            onExpand = onExpandKeyboard,
         ) {
             TextField(
                 modifier = Modifier
@@ -87,7 +88,7 @@ fun ConversationInput(
                 .requiredHeight(120.dp)
                 .requiredWidth(100.dp)
                 .padding(bottom = 20.dp)
-                .offset(x = 0.dp, y = if (isExpanded) (-80).dp else 0.dp),
+                .offset(x = 0.dp, y = if (isKeyboardExpanded) (-80).dp else 0.dp),
             isEnabled = !isLoading,
             isTtsSpeaking = isTtsSpeaking,
             isConversationMode = isConversationMode,
@@ -109,5 +110,7 @@ fun ConversationInputPreview() {
         onSubmit = {},
         stopTTS = {},
         isConversationMode = false,
+        isKeyboardExpanded = true,
+        onExpandKeyboard = {},
     )
 }

@@ -134,4 +134,9 @@ class ConversationUseCases(
     private fun updateState(isLoading: Boolean = false) {
         _state.value = conversation.toUi(isLoading = isLoading)
     }
+
+    fun onEditMessage(message: Message) {
+        conversation = conversation.editLastUserMessage(message)
+        updateState()
+    }
 }

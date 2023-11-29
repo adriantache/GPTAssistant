@@ -42,6 +42,7 @@ import com.adriantache.gptassistant.presentation.util.openSearch
 fun MessageView(
     modifier: Modifier = Modifier,
     message: Message,
+    onEditMessage: (Message) -> Unit,
 ) {
     val bgColor = when (message) {
         is UserMessage -> MaterialTheme.colorScheme.primary
@@ -77,7 +78,16 @@ fun MessageView(
                     context.openSearch(message.content)
                 }
             ) {
-                Icon(painter = painterResource(id = R.drawable.baseline_search_24), contentDescription = "Copy message")
+                Icon(painter = painterResource(id = R.drawable.baseline_search_24), contentDescription = "Search")
+            }
+
+            IconButton(
+                modifier = Modifier.requiredSize(48.dp),
+                onClick = {
+                    onEditMessage(message)
+                }
+            ) {
+                Icon(painter = painterResource(id = R.drawable.baseline_edit_24), contentDescription = "Edit message")
             }
 
             Spacer(Modifier.width(8.dp))

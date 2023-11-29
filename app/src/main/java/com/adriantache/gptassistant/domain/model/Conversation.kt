@@ -38,4 +38,14 @@ data class Conversation(
     fun onReply(reply: Message): Conversation {
         return this.copy(messages = messages.filterNot { it is Message.Loading } + reply)
     }
+
+    fun editLastUserMessage(message: Message): Conversation {
+        val messageIndex = messages.indexOf(message).takeIf { it != -1 } ?: return this
+        val newMessages = messages.subList(0, messageIndex)
+
+        return this.copy(
+            messages = newMessages,
+            latestInput = message.content,
+        )
+    }
 }

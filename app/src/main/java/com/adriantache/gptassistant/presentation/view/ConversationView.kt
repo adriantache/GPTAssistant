@@ -32,13 +32,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.adriantache.gptassistant.R
+import com.adriantache.gptassistant.domain.model.Message
 import com.adriantache.gptassistant.domain.model.ui.ConversationUi
 import kotlinx.coroutines.launch
 
@@ -52,6 +56,7 @@ fun ConversationView(
     input: String,
     onInput: (input: String) -> Unit,
     onSubmit: (fromSpeech: Boolean) -> Unit,
+    onEditMessage: (Message) -> Unit,
     stopTTS: () -> Unit,
     onResetConversation: () -> Unit,
     onLoadPreviousConversations: () -> Unit,
@@ -78,6 +83,8 @@ fun ConversationView(
             topBarAnimation.animateTo(0f)
         }
     }
+
+    var isKeyboardExpanded by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxWidth()) {
         if (canResetConversation) {
@@ -206,6 +213,10 @@ fun ConversationView(
                         MessageView(
                             modifier = Modifier.animateItemPlacement(),
                             message = message,
+                            onEditMessage = {
+                                onEditMessage(it)
+                                isKeyboardExpanded = true
+                            },
                         )
                     }
                 }
@@ -221,6 +232,8 @@ fun ConversationView(
                 onInput = onInput,
                 onSubmit = onSubmit,
                 isConversationMode = isConversationMode,
+                isKeyboardExpanded = isKeyboardExpanded,
+                onExpandKeyboard = { isKeyboardExpanded = !isKeyboardExpanded },
             )
         }
     }

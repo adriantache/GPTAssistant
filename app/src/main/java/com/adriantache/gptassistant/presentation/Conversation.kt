@@ -69,6 +69,7 @@ fun Conversation(
         onLoadPreviousConversations = { showPreviousConversationsDialog = true },
         onShowSettings = { showSettings = true },
         isConversationMode = settings.isConversationMode,
+        onEditMessage = { useCases.onEditMessage(it) }
     )
 
     if (showPreviousConversationsDialog) {
