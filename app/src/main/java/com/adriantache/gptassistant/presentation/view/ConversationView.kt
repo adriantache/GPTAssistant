@@ -232,7 +232,10 @@ fun ConversationView(
                 isTtsSpeaking = isTtsSpeaking,
                 input = input,
                 onInput = onInput,
-                onSubmit = onSubmit,
+                onSubmit = { fromSpeech ->
+                    isKeyboardExpanded = false
+                    onSubmit(fromSpeech)
+                },
                 isConversationMode = isConversationMode,
                 isKeyboardExpanded = isKeyboardExpanded,
                 onExpandKeyboard = { isKeyboardExpanded = !isKeyboardExpanded },
