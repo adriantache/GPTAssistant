@@ -5,6 +5,7 @@ import com.adriantache.gptassistant.domain.model.ui.SettingsUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+// TODO: add setting for hiding keyboard after input
 class SettingsUseCases(
     private val storage: SettingsDataSource,
 ) {
