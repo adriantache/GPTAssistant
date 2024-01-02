@@ -36,20 +36,21 @@ fun KeyboardPopup(
 
     Box(
         modifier = Modifier
-            .clickable {
-                if (isExpanded) {
-                    focusRequester.freeFocus()
-                }
-
-                onExpand()
-            }
             .fillMaxWidth()
             .background(Color.Black)
             .padding(16.dp)
     ) {
         Column {
             Row(
-                Modifier.fillMaxWidth(),
+                Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        if (isExpanded) {
+                            focusRequester.freeFocus()
+                        }
+
+                        onExpand()
+                    },
                 horizontalArrangement = Arrangement.End
             ) {
                 Icon(
