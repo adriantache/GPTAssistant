@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CalendarLocale
 import androidx.compose.material3.DateRangePicker
@@ -245,7 +246,7 @@ fun PreviousConversationsDialog(
                 )
             }
 
-            AlertDialog(
+            BasicAlertDialog(
                 onDismissRequest = { showDatePicker = false },
                 properties = DialogProperties(usePlatformDefaultWidth = false)
             ) {

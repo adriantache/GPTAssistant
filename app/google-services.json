@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "663313759833",
+    "firebase_url": "https://chatgpt-44830-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "chatgpt-44830",
+    "storage_bucket": "chatgpt-44830.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663313759833:android:78828b55bcfb188bfb7b48",
+        "android_client_info": {
+          "package_name": "com.adriantache.gptassistant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "663313759833-nril9ancd5q5es1n7nv5blk5lj8b0irv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.adriantache.gptassistant",
+            "certificate_hash": "7cabd955f6776e71a411da8ad1f41e4b0b032225"
+          }
+        },
+        {
+          "client_id": "663313759833-8th7381j19pjoitd0rgk66mpoph8iki7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXwWmrAoLaN7vxZSZN7nzE08Nh6XgMPx0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "663313759833-8th7381j19pjoitd0rgk66mpoph8iki7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

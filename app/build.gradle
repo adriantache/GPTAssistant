@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.application'
-    id 'com.google.devtools.ksp' version '1.9.20-1.0.14'
+    id 'com.google.devtools.ksp' version '1.9.21-1.0.16'
     id 'com.google.gms.google-services'
     id 'kotlinx-serialization'
     id("com.google.firebase.crashlytics")
@@ -16,8 +16,8 @@ android {
         applicationId "com.adriantache.gptassistant"
         minSdk 26
         targetSdk 34
-        versionCode 10005
-        versionName "1.0.5"
+        versionCode 10006
+        versionName "1.0.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -43,7 +43,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.5.4'
+        kotlinCompilerExtensionVersion '1.5.7'
     }
     packagingOptions {
         resources {
@@ -55,12 +55,12 @@ android {
 dependencies {
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
-    implementation 'androidx.activity:activity-compose:1.8.1'
+    implementation 'androidx.activity:activity-compose:1.8.2'
 
     implementation platform('androidx.compose:compose-bom:2023.10.01')
     implementation "androidx.compose.ui:ui"
     implementation "androidx.compose.ui:ui-tooling-preview"
-    implementation 'androidx.compose.material3:material3:1.2.0-alpha11'
+    implementation 'androidx.compose.material3:material3:1.2.0-beta01'
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.2"
 
     testImplementation 'junit:junit:4.13.2'
@@ -72,7 +72,7 @@ dependencies {
 
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2'
     implementation "com.squareup.okhttp3:okhttp:4.11.0"
     implementation 'com.squareup.okhttp3:logging-interceptor:4.11.0'
 
