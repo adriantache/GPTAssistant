@@ -77,7 +77,7 @@ class FirebaseDatabaseImpl(
     }
 
     private fun updateDatabase(updatedContents: List<ConversationData>) {
-        val userModel = UserModel(conversations = updatedContents)
+        val userModel = UserModel(conversations = updatedContents.sortedByDescending { it.startedAt })
         val json = Json.encodeToString(userModel)
 
         myRef?.setValue(json)
