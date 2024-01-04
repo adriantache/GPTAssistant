@@ -1,5 +1,6 @@
 package com.adriantache.gptassistant.presentation.view
 
+import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -31,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,9 +40,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.adriantache.gptassistant.R
 import com.adriantache.gptassistant.domain.model.Message
 import com.adriantache.gptassistant.domain.model.ui.ConversationUi
@@ -86,6 +91,19 @@ fun ConversationView(
     }
 
     var isKeyboardExpanded by remember { mutableStateOf(false) }
+
+    val view = LocalView.current
+    val viewTreeObserver = view.viewTreeObserver
+    DisposableEffect(viewTreeObserver) {
+        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+            isKeyboardExpanded = ViewCompat.getRootWindowInsets(view)?.isVisible(WindowInsetsCompat.Type.ime()) ?: true
+        }
+
+        viewTreeObserver.addOnGlobalLayoutListener(listener)
+        onDispose {
+            viewTreeObserver.removeOnGlobalLayoutListener(listener)
+        }
+    }
 
     Column(Modifier.fillMaxWidth()) {
         if (canResetConversation) {

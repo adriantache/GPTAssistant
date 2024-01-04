@@ -1,6 +1,8 @@
 package com.adriantache.gptassistant.presentation.view
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -18,6 +20,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
@@ -42,6 +46,14 @@ fun ConversationInput(
 ) {
     BackHandler(isKeyboardExpanded) {
         onExpandKeyboard()
+    }
+
+    val audioInputOffset = remember { Animatable(0f) }
+
+    LaunchedEffect(isKeyboardExpanded) {
+        val targetValue = if (isKeyboardExpanded) -80f else 0f
+        val delay = if (!isKeyboardExpanded) 200 else 0
+        audioInputOffset.animateTo(targetValue, animationSpec = tween(durationMillis = 500, delayMillis = delay))
     }
 
     Box(
@@ -88,7 +100,7 @@ fun ConversationInput(
                 .requiredHeight(120.dp)
                 .requiredWidth(100.dp)
                 .padding(bottom = 20.dp)
-                .offset(x = 0.dp, y = if (isKeyboardExpanded) (-80).dp else 0.dp),
+                .offset(x = 0.dp, y = audioInputOffset.value.dp),
             isEnabled = !isLoading,
             isTtsSpeaking = isTtsSpeaking,
             isConversationMode = isConversationMode,
