@@ -13,11 +13,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.googlefonts.Font
-import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.core.view.WindowCompat
-import com.adriantache.gptassistant.R
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -48,20 +44,6 @@ fun GPTAssistantTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    fun initFonts(): FontFamily {
-        val provider = GoogleFont.Provider(
-            providerAuthority = "com.google.android.gms.fonts",
-            providerPackage = "com.google.android.gms",
-            certificates = R.array.com_google_android_gms_fonts_certs,
-        )
-
-        val fontName = GoogleFont("Noto Sans")
-
-        return FontFamily(
-            Font(googleFont = fontName, fontProvider = provider)
-        )
-    }
-
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
@@ -82,7 +64,7 @@ fun GPTAssistantTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = getTypography(initFonts()),
+        typography = getTypography(),
         content = content
     )
 }
