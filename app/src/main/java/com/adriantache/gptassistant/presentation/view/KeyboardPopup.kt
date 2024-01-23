@@ -1,7 +1,5 @@
 package com.adriantache.gptassistant.presentation.view
 
-import android.graphics.Color
-import android.os.Build.VERSION_CODES.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
