@@ -1,7 +1,10 @@
 package com.adriantache.gptassistant.presentation.view
 
+import android.graphics.Color
+import android.os.Build.VERSION_CODES.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -63,7 +66,7 @@ fun KeyboardPopup(
             AnimatedVisibility(
                 isExpanded,
                 enter = slideInVertically(initialOffsetY = { it }),
-                exit = slideOutVertically(targetOffsetY = { it }),
+                exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(durationMillis = 500, delayMillis = 200)),
             ) {
                 LaunchedEffect(this.transition.isRunning) {
                     if (this@AnimatedVisibility.transition.isRunning) return@LaunchedEffect
