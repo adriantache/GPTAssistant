@@ -94,7 +94,6 @@ fun ConversationInput(
             )
         }
 
-        // TODO: move this to a separate component and extract all the garbage from it
         AudioInput(
             modifier = Modifier
                 .requiredHeight(120.dp)
