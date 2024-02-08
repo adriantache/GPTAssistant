@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -73,10 +74,18 @@ fun KeyboardPopup(
                     },
                 horizontalArrangement = Arrangement.End
             ) {
+                AnimatedVisibility(isTutorialTextVisible) {
+                    Row {
+                        Text("Keyboard", color = Color.White)
+
+                        Spacer(modifier = Modifier.width(16.dp))
+                    }
+                }
+
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_keyboard_24),
                     contentDescription = "Show keyboard",
-                    tint = Color.White
+                    tint = Color.White,
                 )
             }
 
