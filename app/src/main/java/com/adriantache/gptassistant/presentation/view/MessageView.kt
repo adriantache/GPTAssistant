@@ -106,12 +106,11 @@ fun MessageView(
                 .background(bgColor, OutlinedTextFieldDefaults.shape)
                 .padding(12.dp),
         ) {
-            // TODO: restore style
             Markdown(
                 modifier = Modifier.fillMaxWidth(),
                 text = message.content,
-//                style = fontStyle,
-//                color = textColor,
+                style = fontStyle,
+                color = textColor,
             )
 
             if (message is Loading) {

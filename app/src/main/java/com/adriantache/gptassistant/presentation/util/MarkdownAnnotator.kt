@@ -5,6 +5,8 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,6 +23,7 @@ import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -37,10 +40,13 @@ import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
 
 // TODO: clean up and rewrite relevant parts of this file
+// TODO: fix formatting for code blocks
 @Composable
 fun Markdown(
     modifier: Modifier = Modifier,
     text: String,
+    style: TextStyle = LocalTextStyle.current,
+    color: Color = LocalContentColor.current,
 ) {
     val markdown = MarkdownParser(CommonMarkFlavourDescriptor())
         .parse(MarkdownElementTypes.MARKDOWN_FILE, text, true)
@@ -48,7 +54,9 @@ fun Markdown(
     return Markdown(
         modifier = modifier,
         text = text,
-        markdown = markdown
+        markdown = markdown,
+        style = style,
+        color = color,
     )
 }
 
@@ -58,7 +66,9 @@ fun Markdown(
 private fun Markdown(
     modifier: Modifier = Modifier,
     text: String,
-    markdown: ASTNode
+    markdown: ASTNode,
+    style: TextStyle,
+    color: Color,
 ) {
     val builder = AnnotatedString.Builder()
     val images = mutableListOf<Pair<Int, String>>()
@@ -99,6 +109,7 @@ private fun Markdown(
         modifier = modifier,
         text = builder.toAnnotatedString(),
         inlineContent = inlineContents,
+        style = style.copy(color = color),
     ) { position ->
         Log.d("Markdown", "link clicked:" + links.firstOrNull { it.first.contains(position) })
     }
@@ -260,7 +271,13 @@ fun AnnotatedString.Builder.appendMarkdown(
         }
 
         MarkdownElementTypes.CODE_FENCE -> {
-            withStyle(SpanStyle(background = Color.Gray)) {
+            withStyle(
+                SpanStyle(
+                    background = Color.Gray,
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 14.sp,
+                )
+            ) {
                 node.children
                     .drop(1)
                     .dropLast(1)
@@ -278,9 +295,9 @@ fun AnnotatedString.Builder.appendMarkdown(
 
         MarkdownElementTypes.IMAGE -> {
             val linkNode = node.children[node.children.size - 1]
+
             if (linkNode.children.size > 2) {
-                val link =
-                    linkNode.children[linkNode.children.size - 2].getTextInNode(markdownText)
+                val link = linkNode.children[linkNode.children.size - 2].getTextInNode(markdownText)
                 onInlineContents(node.startOffset, link.toString())
                 appendInlineContent(link.toString(), link.toString())
             }
@@ -289,12 +306,11 @@ fun AnnotatedString.Builder.appendMarkdown(
         MarkdownElementTypes.INLINE_LINK -> {
             val linkDestination = node.children.findLast { it.type == MarkdownElementTypes.LINK_DESTINATION }
                 ?: return this
-            val linkText = node.children.find { it.type == MarkdownElementTypes.LINK_TEXT }!!
-                .children[1]
+            val linkText = node.children.find { it.type == MarkdownElementTypes.LINK_TEXT }!!.children[1]
             if (linkDestination.children.size > 2) {
-                val link =
-                    linkDestination.getTextInNode(markdownText).toString()
+                val link = linkDestination.getTextInNode(markdownText).toString()
                 val start = this.length
+
                 withStyle(SpanStyle(color = Color.Blue)) {
                     appendMarkdown(
                         markdownText = markdownText,
@@ -303,17 +319,16 @@ fun AnnotatedString.Builder.appendMarkdown(
                         onInlineContents = onInlineContents,
                         onLinkContents = onLinkContents
                     )
+
                     val end = this.length
                     onLinkContents(start..end, link)
                 }
             }
         }
 
-        else -> {
-            append(
-                text = node.getTextInNode(markdownText).toString()
-            )
-        }
+        else -> append(
+            text = node.getTextInNode(markdownText).toString()
+        )
     }
 
     return this
