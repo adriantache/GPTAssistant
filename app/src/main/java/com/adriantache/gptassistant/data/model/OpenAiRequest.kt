@@ -4,9 +4,10 @@ package com.adriantache.gptassistant.data.model
 
 import kotlinx.serialization.Serializable
 
-private const val MODEL_GPT_3 = "gpt-3.5-turbo-1106"
-private const val MODEL_GPT_4 = "gpt-4-0613"
-private const val MODEL_GPT_4_TURBO = "gpt-4-1106-preview"
+// Models without version always point to latest version.
+private const val MODEL_GPT_3 = "gpt-3.5-turbo"
+private const val MODEL_GPT_4 = "gpt-4"
+private const val MODEL_GPT_4_TURBO = "gpt-4-turbo-preview"
 
 @Serializable
 data class OpenAiRequest(

@@ -13,6 +13,7 @@ import com.adriantache.gptassistant.domain.util.Event.Companion.asEvent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -24,9 +25,9 @@ private val titleQuery = Message.UserMessage("Suggest a title for this conversat
 
 class ConversationUseCases(
     private val repository: Repository,
-    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
-    private val scope = CoroutineScope(dispatcher)
+    private var scope = CoroutineScope(dispatcher)
 
     @set:Synchronized
     @get:Synchronized
@@ -136,6 +137,11 @@ class ConversationUseCases(
     }
 
     fun onEditMessage(message: Message) {
+        // TODO: improve this when rewriting the logic
+        // Cancel pending request.
+        scope.cancel()
+        scope = CoroutineScope(dispatcher)
+
         conversation = conversation.editLastUserMessage(message)
         updateState()
     }

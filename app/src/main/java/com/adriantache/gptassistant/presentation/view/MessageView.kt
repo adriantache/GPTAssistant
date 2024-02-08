@@ -18,7 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -36,6 +35,7 @@ import com.adriantache.gptassistant.domain.model.Message.AdminMessage
 import com.adriantache.gptassistant.domain.model.Message.GptMessage
 import com.adriantache.gptassistant.domain.model.Message.Loading
 import com.adriantache.gptassistant.domain.model.Message.UserMessage
+import com.adriantache.gptassistant.presentation.util.Markdown
 import com.adriantache.gptassistant.presentation.util.openSearch
 
 @Composable
@@ -106,11 +106,12 @@ fun MessageView(
                 .background(bgColor, OutlinedTextFieldDefaults.shape)
                 .padding(12.dp),
         ) {
-            Text(
+            // TODO: restore style
+            Markdown(
                 modifier = Modifier.fillMaxWidth(),
                 text = message.content,
-                style = fontStyle,
-                color = textColor,
+//                style = fontStyle,
+//                color = textColor,
             )
 
             if (message is Loading) {

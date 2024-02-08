@@ -16,15 +16,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.adriantache.gptassistant.R
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -34,6 +41,18 @@ fun KeyboardPopup(
     content: @Composable (FocusRequester) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
+
+    var isTutorialTextVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        delay(500)
+
+        isTutorialTextVisible = true
+
+        delay(2000)
+
+        isTutorialTextVisible = false
+    }
 
     Box(
         modifier = Modifier
@@ -80,4 +99,29 @@ fun KeyboardPopup(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun KeyboardPopupPreview() {
+    KeyboardPopup(
+        isExpanded = true,
+        onExpand = {},
+    ) {
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = Color.White,
+        ) {
+            Text(modifier = Modifier.padding(16.dp), text = "test")
+        }
+    }
+}
+
+@Preview
+@Composable
+fun KeyboardPopupPreviewClosed() {
+    KeyboardPopup(
+        isExpanded = false,
+        onExpand = {},
+    ) {}
 }
