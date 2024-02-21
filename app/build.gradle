@@ -79,14 +79,14 @@ dependencies {
 
     implementation "com.google.accompanist:accompanist-permissions:0.33.0-alpha"
 
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation 'com.google.firebase:firebase-common'
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")
 
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
 
     implementation "io.insert-koin:koin-android:3.3.3"
     implementation "io.insert-koin:koin-androidx-compose:3.4.2"
