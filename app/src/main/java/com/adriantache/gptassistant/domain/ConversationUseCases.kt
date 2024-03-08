@@ -96,7 +96,6 @@ class ConversationUseCases(
             repository.getImage(conversation.latestInput)
                 .onSuccess { reply ->
                     onResetConversation()
-                    updateState()
                     _events.value = ConversationEvent.ShowImage(reply).asEvent()
                 }
                 .onFailure {
