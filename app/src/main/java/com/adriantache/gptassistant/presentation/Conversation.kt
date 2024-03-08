@@ -16,6 +16,7 @@ import com.adriantache.gptassistant.domain.SettingsUseCases
 import com.adriantache.gptassistant.domain.model.ConversationEvent
 import com.adriantache.gptassistant.presentation.tts.TtsHelper
 import com.adriantache.gptassistant.presentation.view.ConversationView
+import com.adriantache.gptassistant.presentation.view.ImageGenerationView
 import com.adriantache.gptassistant.presentation.view.PreviousConversationsDialog
 import com.adriantache.gptassistant.presentation.view.SettingsScreen
 import org.koin.androidx.compose.get
@@ -31,6 +32,7 @@ fun Conversation(
     var showPreviousConversationsDialog: Boolean by remember { mutableStateOf(false) }
     var showSettings: Boolean by remember { mutableStateOf(false) }
     var showErrorMessage: String? by remember { mutableStateOf(null) }
+    var showImageUrl: String? by remember { mutableStateOf(null) }
 
     var isTtsSpeaking by remember { mutableStateOf(false) }
 
@@ -48,6 +50,8 @@ fun Conversation(
 
             is ConversationEvent.Error -> showErrorMessage = event.message ?: "An error has occurred."
 
+            is ConversationEvent.ShowImage -> showImageUrl = event.url
+
             null -> Unit
         }
     }
@@ -58,10 +62,14 @@ fun Conversation(
         isTtsSpeaking = isTtsSpeaking,
         input = screenState.latestInput,
         onInput = useCases::onInput,
-        onSubmit = { fromSpeech ->
+        onSubmit = { fromSpeech, isImageGeneration ->
             keyboard?.hide()
 
-            useCases.onSubmit(fromSpeech = fromSpeech)
+            if (isImageGeneration) {
+                useCases.onRequestImage()
+            } else {
+                useCases.onSubmit(fromSpeech = fromSpeech)
+            }
         },
         stopTTS = { tts.stop() },
         canResetConversation = screenState.canResetConversation,
@@ -98,5 +106,11 @@ fun Conversation(
             settings = settings,
             onDismiss = { showSettings = false },
         )
+    }
+
+    showImageUrl?.let {
+        ImageGenerationView(url = it) {
+            showImageUrl = null
+        }
     }
 }

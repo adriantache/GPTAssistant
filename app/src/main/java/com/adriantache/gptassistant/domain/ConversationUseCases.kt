@@ -82,6 +82,30 @@ class ConversationUseCases(
         }
     }
 
+    // TODO: move this workflow to its appropriate use case instead
+    fun onRequestImage() {
+        // TODO: remove this hack
+        if (System.currentTimeMillis() - lastRequestTime < 500) {
+            return
+        }
+        lastRequestTime = System.currentTimeMillis()
+
+        updateState(isLoading = true)
+
+        scope.launch {
+            repository.getImage(conversation.latestInput)
+                .onSuccess { reply ->
+                    onResetConversation()
+                    updateState()
+                    _events.value = ConversationEvent.ShowImage(reply).asEvent()
+                }
+                .onFailure {
+                    updateState()
+                    _events.value = ConversationEvent.Error(it.message).asEvent()
+                }
+        }
+    }
+
     fun onResetConversation() {
         updateState(isLoading = true)
 
@@ -92,7 +116,7 @@ class ConversationUseCases(
     private suspend fun saveConversation() {
         if (conversation.title == null) {
             val title = repository.getReply(
-                conversation.copy(messages = conversation.messages + titleQuery).toData()
+                conversation.copy(messages = conversation.messages + titleQuery).toData(),
             ).getOrNull()?.content?.replace("\"", "")
                 ?: UUID.randomUUID().toString()
 

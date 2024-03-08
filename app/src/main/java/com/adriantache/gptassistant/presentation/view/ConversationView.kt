@@ -30,6 +30,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -60,7 +61,7 @@ fun ConversationView(
     canResetConversation: Boolean,
     input: String,
     onInput: (input: String) -> Unit,
-    onSubmit: (fromSpeech: Boolean) -> Unit,
+    onSubmit: (fromSpeech: Boolean, isImageGeneration: Boolean) -> Unit,
     onEditMessage: (Message) -> Unit,
     stopTTS: () -> Unit,
     onResetConversation: () -> Unit,
@@ -72,6 +73,8 @@ fun ConversationView(
     val lazyListState = rememberLazyListState()
 
     val topBarAnimation = remember { Animatable(-200f) }
+
+    var isImageGeneration by remember { mutableStateOf(false) }
 
     BackHandler(canResetConversation) {
         onResetConversation()
@@ -90,16 +93,17 @@ fun ConversationView(
         }
     }
 
-    var isKeyboardExpanded by remember { mutableStateOf(false) }
-
     val view = LocalView.current
     val viewTreeObserver = view.viewTreeObserver
+    var isKeyboardExpanded by remember { mutableStateOf(false) }
+
     DisposableEffect(viewTreeObserver) {
         val listener = ViewTreeObserver.OnGlobalLayoutListener {
             isKeyboardExpanded = ViewCompat.getRootWindowInsets(view)?.isVisible(WindowInsetsCompat.Type.ime()) ?: true
         }
 
         viewTreeObserver.addOnGlobalLayoutListener(listener)
+
         onDispose {
             viewTreeObserver.removeOnGlobalLayoutListener(listener)
         }
@@ -226,6 +230,43 @@ fun ConversationView(
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                             )
                         }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
+                                .padding(16.dp),
+                        ) {
+                            Text(
+                                text = "It is now also possible to generate images, but please be aware the cost for that is much higher than conversations.",
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    modifier = Modifier.clickable { isImageGeneration = false },
+                                    text = "Conversation",
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                )
+
+                                Switch(checked = isImageGeneration, onCheckedChange = { isImageGeneration = it })
+
+                                Text(
+                                    modifier = Modifier.clickable { isImageGeneration = true },
+                                    text = "Image Generation",
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                )
+                            }
+                        }
                     }
                 } else {
                     items(conversation.messages, key = { it.id }) { message ->
@@ -252,7 +293,7 @@ fun ConversationView(
                 onInput = onInput,
                 onSubmit = { fromSpeech ->
                     isKeyboardExpanded = false
-                    onSubmit(fromSpeech)
+                    onSubmit(fromSpeech, isImageGeneration)
                 },
                 isConversationMode = isConversationMode,
                 isKeyboardExpanded = isKeyboardExpanded,

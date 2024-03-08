@@ -56,6 +56,7 @@ class AssistantUseCases(
         onInit()
     }
 
+    // TODO: also save api key to storage
     private fun onApiKeyInput(key: String) {
         if (key.isBlank()) return
 

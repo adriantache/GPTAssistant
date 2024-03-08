@@ -25,8 +25,21 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            Properties localProps = new Properties()
+            localProps.load(new FileInputStream(file('../local.properties')))
+            storeFile file(localProps["storeFile"])
+            keyAlias localProps["keyAlias"]
+            storePassword localProps["storePassword"]
+            keyPassword localProps["keyPassword"]
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.release
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
