@@ -9,6 +9,7 @@ import com.adriantache.gptassistant.data.dataSource.ApiKeyDataSourceImpl
 import com.adriantache.gptassistant.data.dataSource.SettingsDataSourceImpl
 import com.adriantache.gptassistant.data.firebase.FirebaseDatabaseImpl
 import com.adriantache.gptassistant.data.retrofit.OpenAiApi
+import com.adriantache.gptassistant.data.retrofit.StabilityAiApi
 import com.adriantache.gptassistant.data.retrofit.getRetrofit
 import com.adriantache.gptassistant.domain.AssistantUseCases
 import com.adriantache.gptassistant.domain.ConversationUseCases
@@ -32,15 +33,16 @@ fun Application.koinSetup() {
         modules(
             module {
                 single { AssistantUseCases(get(), get(), get()) }
-                single { ConversationUseCases(get()) }
-                single { SettingsUseCases(get()) }
+                single { ConversationUseCases(get(), get()) }
+                single { SettingsUseCases(get(), get()) }
 
-                single<Repository> { RepositoryImpl(get(), get(), get()) }
+                single<Repository> { RepositoryImpl(get(), get(), get(), get()) }
                 single<SettingsDataSource> { SettingsDataSourceImpl(get()) }
                 single<ApiKeyDataSource> { ApiKeyDataSourceImpl(get()) }
 
                 single { getRetrofit() }
                 factory<OpenAiApi> { get<Retrofit>().create(OpenAiApi::class.java) }
+                factory<StabilityAiApi> { get<Retrofit>().create(StabilityAiApi::class.java) }
 
                 single { FirebaseDatabaseImpl(get()) }
 

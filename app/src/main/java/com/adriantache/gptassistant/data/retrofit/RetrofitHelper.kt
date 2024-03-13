@@ -25,7 +25,7 @@ fun getRetrofit(): Retrofit {
     }
 
     return Retrofit.Builder()
-        .baseUrl("https://api.openai.com/")
+        .baseUrl("http://localhost/")
         .addConverterFactory(json.asConverterFactory(contentType))
         .client(okHttpClient)
         .build()

@@ -6,4 +6,7 @@ interface SettingsDataSource {
     fun getConversationMode(): Boolean
     fun setAreConversationsSaved(active: Boolean)
     fun getAreConversationsSaved(): Boolean?
+
+    fun setUseStabilityAi(active: Boolean)
+    fun getUseStabilityAi(): Boolean
 }

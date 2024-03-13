@@ -28,7 +28,7 @@ class AssistantUseCases(
     val states: StateFlow<AssistantState> = _states
 
     private fun onInit() {
-        val noApiKey = apiKeyDataSource.apiKey.isNullOrBlank()
+        val noApiKey = apiKeyDataSource.openAiApiKey.isNullOrBlank()
         val shouldShowConversationSaveOptions = settingsUseCases.settings.value.areConversationsSaved == null ||
                 (settingsUseCases.settings.value.areConversationsSaved == true && !firebaseDatabaseImpl.hasId())
 
@@ -60,7 +60,7 @@ class AssistantUseCases(
     private fun onApiKeyInput(key: String) {
         if (key.isBlank()) return
 
-        apiKeyDataSource.apiKey = key
+        apiKeyDataSource.openAiApiKey = key
         onInit()
     }
 }

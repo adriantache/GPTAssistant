@@ -25,6 +25,13 @@ android {
         }
     }
 
+    /**
+     * Add these variables to the local.properties file, with the appropriate config, or the project will not compile:
+     * storeFile=
+     * keyAlias=
+     * storePassword=
+     * keyPassword=
+     */
     signingConfigs {
         release {
             Properties localProps = new Properties()

@@ -9,6 +9,7 @@ import com.adriantache.gptassistant.domain.data.SettingsDataSource
 private const val PREFERENCES_FILE = "preferences"
 private const val CONVERSATION_MODE = "CONVERSATION_MODE"
 private const val ARE_CONVERSATIONS_SAVED = "ARE_CONVERSATIONS_SAVED"
+private const val USE_STABILITY_AI = "USE_STABILITY_AI"
 
 class SettingsDataSourceImpl(
     context: Context,
@@ -29,6 +30,18 @@ class SettingsDataSourceImpl(
         if (!preferences.contains(ARE_CONVERSATIONS_SAVED)) return null
 
         return preferences.getBoolean(ARE_CONVERSATIONS_SAVED, false)
+    }
+
+    override fun setUseStabilityAi(active: Boolean) {
+        preferences.edit {
+            putBoolean(USE_STABILITY_AI, active)
+        }
+    }
+
+    override fun getUseStabilityAi(): Boolean {
+        if (!preferences.contains(USE_STABILITY_AI)) return false
+
+        return preferences.getBoolean(USE_STABILITY_AI, false)
     }
 
     override fun setConversationMode(active: Boolean) {

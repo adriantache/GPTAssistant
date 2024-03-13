@@ -33,18 +33,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
-private const val OPENAI_API_KEY_PAGE = "https://platform.openai.com/account/api-keys"
+private const val STABILITY_AI_API_KEY_PAGE = "https://platform.stability.ai/account/keys"
 
 @Composable
-fun ApiKeyInputDialog(
+fun StabilityAiApiKeyInputDialog(
     onSubmit: (String) -> Unit,
+    onDismiss: () -> Unit,
 ) {
     val uriHandler = LocalUriHandler.current
 
     var input by remember { mutableStateOf("") }
 
     Dialog(
-        onDismissRequest = { /*ignored since it's a mandatory input*/ },
+        onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Column(
@@ -57,7 +58,7 @@ fun ApiKeyInputDialog(
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "Please enter your OpenAI API key to connect to ChatGPT:",
+                text = "Please enter your stability.ai API key to use it for image generation:",
                 style = MaterialTheme.typography.headlineSmall,
             )
 
@@ -65,7 +66,7 @@ fun ApiKeyInputDialog(
 
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "Please note that you will need to set up billing in your OpenAI account to access the ChatGPT API.",
+                text = "Please note that you will need to purchase credits in your stability.ai account to access its image generation service.",
                 style = MaterialTheme.typography.labelSmall,
                 fontStyle = FontStyle.Italic,
             )
@@ -86,15 +87,13 @@ fun ApiKeyInputDialog(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable {
-                        uriHandler.openUri(OPENAI_API_KEY_PAGE)
-                    }
+                    .clickable { uriHandler.openUri(STABILITY_AI_API_KEY_PAGE) }
                     .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(4.dp))
                     .padding(8.dp),
             ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Click here to open the OpenAI website to get a key.",
+                    text = "Click here to open the stability.ai website to get a key.",
                     style = MaterialTheme.typography.labelSmall,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -117,10 +116,10 @@ fun ApiKeyInputDialog(
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview()
+@Preview
 @Composable
 private fun ApiKeyInputPreview() {
-    ApiKeyInputDialog(
+    OpenAiApiKeyInputDialog(
         onSubmit = {},
     )
 }

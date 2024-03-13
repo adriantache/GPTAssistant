@@ -1,5 +1,6 @@
 package com.adriantache.gptassistant.domain
 
+import android.util.Log
 import com.adriantache.gptassistant.domain.data.Repository
 import com.adriantache.gptassistant.domain.model.Conversation
 import com.adriantache.gptassistant.domain.model.ConversationEvent
@@ -25,6 +26,7 @@ private val titleQuery = Message.UserMessage("Suggest a title for this conversat
 
 class ConversationUseCases(
     private val repository: Repository,
+    private val settingsUseCases: SettingsUseCases,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
     private var scope = CoroutineScope(dispatcher)
@@ -76,6 +78,8 @@ class ConversationUseCases(
                     }
                 }
                 .onFailure {
+                    Log.e(this::class.simpleName, "Cannot get conversation reply", it)
+
                     updateState()
                     _events.value = ConversationEvent.Error(it.message).asEvent()
                 }
@@ -93,12 +97,17 @@ class ConversationUseCases(
         updateState(isLoading = true)
 
         scope.launch {
-            repository.getImage(conversation.latestInput)
+            repository.getImage(
+                prompt = conversation.latestInput,
+                useStabilityAi = settingsUseCases.settings.value.isStabilityAi,
+            )
                 .onSuccess { reply ->
                     onResetConversation()
                     _events.value = ConversationEvent.ShowImage(reply).asEvent()
                 }
                 .onFailure {
+                    Log.e(this::class.simpleName, "Cannot get generated image", it)
+
                     updateState()
                     _events.value = ConversationEvent.Error(it.message).asEvent()
                 }
