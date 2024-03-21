@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,9 +82,7 @@ fun ImageGenerationView(
                     )
                 } else {
                     val imageBytes = remember(image) {
-                        derivedStateOf {
-                            Base64.decode(image.base64!!)
-                        }
+                        Base64.decode(image.base64!!)
                     }
 
                     AsyncImage(
