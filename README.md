@@ -19,6 +19,7 @@ for future reference.
 **Pending features:**
 https://kanbanflow.com/board/ypq4WLq
 
-**Proudly part of Backdrop Build v2**
+**Proudly part of Backdrop Build**
 
-![Backdrop Build](https://pbs.twimg.com/media/GAIStbuWIAAoNVU?format=png&name=900x900)
+<img src="https://pbs.twimg.com/media/GAIStbuWIAAoNVU?format=png&name=small" width="500"> <img src="https://pbs.twimg.com/card_img/1769483721374044160/tAgkDkB2?format=png&name=small" width="500">
+
