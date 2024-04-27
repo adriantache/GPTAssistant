@@ -16,8 +16,8 @@ android {
         applicationId "com.adriantache.gptassistant"
         minSdk 26
         targetSdk 34
-        versionCode 10008
-        versionName "1.0.8"
+        versionCode 10010
+        versionName "1.0.10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -25,6 +25,13 @@ android {
         }
     }
 
+    /**
+     * Add these variables to the local.properties file, with the appropriate config, or the project will not compile:
+     * storeFile=
+     * keyAlias=
+     * storePassword=
+     * keyPassword=
+     */
     signingConfigs {
         release {
             Properties localProps = new Properties()
@@ -70,14 +77,14 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"
     implementation "androidx.activity:activity-compose:1.8.2"
 
-    implementation platform("androidx.compose:compose-bom:2024.02.01")
+    implementation platform("androidx.compose:compose-bom:2024.02.02")
     implementation "androidx.compose.ui:ui"
     implementation "androidx.compose.ui:ui-tooling-preview"
-    implementation "androidx.compose.material3:material3:1.2.0"
+    implementation "androidx.compose.material3:material3:1.2.1"
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.7.0"
 
     testImplementation "junit:junit:4.13.2"
-    androidTestImplementation platform('androidx.compose:compose-bom:2024.02.01')
+    androidTestImplementation platform('androidx.compose:compose-bom:2024.02.02')
     androidTestImplementation "androidx.test.ext:junit:1.1.5"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4"
@@ -92,7 +99,7 @@ dependencies {
 
     implementation "com.google.accompanist:accompanist-permissions:0.33.0-alpha"
 
-    implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation 'com.google.firebase:firebase-common'
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-auth")
@@ -107,7 +114,7 @@ dependencies {
     implementation "androidx.glance:glance-appwidget:1.0.0"
     implementation "androidx.glance:glance-material3:1.0.0"
 
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.2")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.3")
 
     implementation("org.jetbrains:markdown:0.5.0")
     implementation("io.coil-kt:coil-compose:2.5.0")

@@ -23,6 +23,15 @@ fun SettingsScreen(
     settings: SettingsUi,
     onDismiss: () -> Unit,
 ) {
+    if (settings.isStabilityAi && !settings.hasStabilityAiApiKey) {
+        StabilityAiApiKeyInputDialog(
+            onSubmit = settings.onInputStabilityApiKey,
+            onDismiss = {
+                settings.setUseStabilityAi(false)
+            }
+        )
+    }
+
     BasicAlertDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -51,6 +60,12 @@ fun SettingsScreen(
                 checked = settings.isConversationMode,
                 onChecked = settings.setConversationMode,
             )
+
+            SettingsRow(
+                text = "Use stability.ai for image generation",
+                checked = settings.isStabilityAi,
+                onChecked = settings.setUseStabilityAi,
+            )
         }
     }
 }
@@ -60,11 +75,15 @@ fun SettingsScreen(
 fun SettingsScreenPreview() {
     SettingsScreen(
         settings = SettingsUi(
-            isConversationMode = false,
-            setConversationMode = {},
             areConversationsSaved = true,
             setAreConversationsSaved = {},
-        )
-    ) {
-    }
+            isConversationMode = false,
+            setConversationMode = {},
+            isStabilityAi = true,
+            setUseStabilityAi = {},
+            hasStabilityAiApiKey = true,
+            onInputStabilityApiKey = {},
+        ),
+        onDismiss = {},
+    )
 }

@@ -12,21 +12,29 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.adriantache.gptassistant.R
 import com.adriantache.gptassistant.presentation.KeepScreenOn
+import com.adriantache.gptassistant.data.model.GeneratedImage
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
+@OptIn(ExperimentalEncodingApi::class)
 @Composable
 fun ImageGenerationView(
-    url: String,
+    image: GeneratedImage,
     onDismiss: () -> Unit,
 ) {
     val clipboard = LocalClipboardManager.current
@@ -63,15 +71,33 @@ fun ImageGenerationView(
             ) {
                 CircularLoadingAnimation()
 
-                AsyncImage(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable {
-                            clipboard.setText(AnnotatedString(url))
-                        },
-                    model = url,
-                    contentDescription = null,
-                )
+                if (image.isUrl) {
+                    val url = image.url!!
+
+                    AsyncImage(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable {
+                                clipboard.setText(AnnotatedString(url))
+                            },
+                        model = url,
+                        contentDescription = null,
+                    )
+                } else {
+                    val imageBytes = remember(image) {
+                        Base64.decode(image.base64!!)
+                    }
+
+                    AsyncImage(
+                        modifier = Modifier.fillMaxWidth(),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(imageBytes)
+                            .crossfade(true)
+                            .build(),
+                        contentScale = ContentScale.FillWidth,
+                        contentDescription = null,
+                    )
+                }
             }
         }
     }

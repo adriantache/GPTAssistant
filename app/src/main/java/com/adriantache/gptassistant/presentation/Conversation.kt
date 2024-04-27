@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import com.adriantache.gptassistant.data.model.GeneratedImage
 import com.adriantache.gptassistant.domain.ConversationUseCases
 import com.adriantache.gptassistant.domain.SettingsUseCases
 import com.adriantache.gptassistant.domain.model.ConversationEvent
@@ -32,7 +33,7 @@ fun Conversation(
     var showPreviousConversationsDialog: Boolean by remember { mutableStateOf(false) }
     var showSettings: Boolean by remember { mutableStateOf(false) }
     var showErrorMessage: String? by remember { mutableStateOf(null) }
-    var showImageUrl: String? by remember { mutableStateOf(null) }
+    var showImage: GeneratedImage? by remember { mutableStateOf(null) }
 
     var isTtsSpeaking by remember { mutableStateOf(false) }
 
@@ -50,7 +51,7 @@ fun Conversation(
 
             is ConversationEvent.Error -> showErrorMessage = event.message ?: "An error has occurred."
 
-            is ConversationEvent.ShowImage -> showImageUrl = event.url
+            is ConversationEvent.ShowImage -> showImage = event.image
 
             null -> Unit
         }
@@ -108,9 +109,9 @@ fun Conversation(
         )
     }
 
-    showImageUrl?.let {
-        ImageGenerationView(url = it) {
-            showImageUrl = null
+    showImage?.let {
+        ImageGenerationView(image = it) {
+            showImage = null
         }
     }
 }

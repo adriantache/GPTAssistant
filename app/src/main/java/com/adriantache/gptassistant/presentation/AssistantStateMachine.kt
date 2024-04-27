@@ -7,7 +7,7 @@ import androidx.lifecycle.Lifecycle.State.RESUMED
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adriantache.gptassistant.domain.AssistantUseCases
 import com.adriantache.gptassistant.domain.model.AssistantState
-import com.adriantache.gptassistant.presentation.view.ApiKeyInputDialog
+import com.adriantache.gptassistant.presentation.view.OpenAiApiKeyInputDialog
 import com.adriantache.gptassistant.presentation.view.SaveHistoryDialog
 import org.koin.androidx.compose.get
 
@@ -29,7 +29,7 @@ fun AssistantStateMachine(
 
     when (val localState = state) {
         is AssistantState.Init -> Unit
-        is AssistantState.ApiKeyInput -> ApiKeyInputDialog(onSubmit = localState.onSubmit)
+        is AssistantState.ApiKeyInput -> OpenAiApiKeyInputDialog(onSubmit = localState.onSubmit)
         is AssistantState.SaveConversationHistory -> SaveHistoryDialog(
             onSaveGoogle = localState.onSaveGoogle,
             onRejectSaving = localState.onRejectSaving,
