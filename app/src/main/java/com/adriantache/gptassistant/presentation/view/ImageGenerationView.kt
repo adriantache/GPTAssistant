@@ -22,6 +22,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.adriantache.gptassistant.R
+import com.adriantache.gptassistant.presentation.KeepScreenOn
 
 @Composable
 fun ImageGenerationView(
@@ -29,6 +30,8 @@ fun ImageGenerationView(
     onDismiss: () -> Unit,
 ) {
     val clipboard = LocalClipboardManager.current
+
+    KeepScreenOn()
 
     Dialog(
         onDismissRequest = onDismiss,

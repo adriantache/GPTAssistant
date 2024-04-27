@@ -1,16 +1,15 @@
 package com.adriantache.gptassistant.presentation
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import android.view.WindowManager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
+import com.adriantache.gptassistant.presentation.util.findActivity
 
 @Composable
-fun KeepScreenOn(keepScreenOn: Boolean) {
+fun KeepScreenOn(keepScreenOn: Boolean = true) {
     val context = LocalContext.current
+
     DisposableEffect(keepScreenOn) {
         val window = context.findActivity()?.window
         if (keepScreenOn) {
@@ -20,18 +19,9 @@ fun KeepScreenOn(keepScreenOn: Boolean) {
         }
 
         onDispose {
-            if(!keepScreenOn) return@onDispose
+            if (!keepScreenOn) return@onDispose
 
             window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
-}
-
-private fun Context.findActivity(): Activity? {
-    var context = this
-    while (context is ContextWrapper) {
-        if (context is Activity) return context
-        context = context.baseContext
-    }
-    return null
 }
