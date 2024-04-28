@@ -5,14 +5,17 @@ import com.adriantache.gptassistant.data.model.ChatMessage.Companion.toChatMessa
 import com.adriantache.gptassistant.data.model.GeneratedImage
 import com.adriantache.gptassistant.data.model.OpenAiImageRequest
 import com.adriantache.gptassistant.data.model.OpenAiRequest
+import com.adriantache.gptassistant.data.model.StabilityAi3Request
 import com.adriantache.gptassistant.data.model.StabilityAiFinishReason
-import com.adriantache.gptassistant.data.model.StabilityAiRequest
 import com.adriantache.gptassistant.data.retrofit.OpenAiApi
 import com.adriantache.gptassistant.data.retrofit.StabilityAiApi
 import com.adriantache.gptassistant.domain.data.ApiKeyDataSource
 import com.adriantache.gptassistant.domain.data.Repository
 import com.adriantache.gptassistant.domain.model.Message
 import com.adriantache.gptassistant.domain.model.data.ConversationData
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
 
 private const val AUTH_HEADER_PREFIX = "Bearer "
 private const val NO_API_KEY_ERROR = "No API key!"
@@ -79,23 +82,26 @@ class RepositoryImpl(
         val authHeader = apiKeyDataSource.stabilityAiApiKey?.let { AUTH_HEADER_PREFIX + it }
 
         val response = try {
-            stabilityAiService.getImageGeneration(
+            // For some reason, we now need to manually encode this and add it as a multipart.
+            val promptJson = Json.encodeToString(StabilityAi3Request(prompt))
+
+            stabilityAiService.getImageGeneration3(
                 authHeader = authHeader ?: return Result.failure(IllegalArgumentException(NO_API_KEY_ERROR)),
-                request = StabilityAiRequest(prompt),
+                request = promptJson,
             )
         } catch (e: Exception) {
             return Result.failure(e)
         }
 
         return if (response.isSuccessful) {
-            val image = response.body()?.artifacts?.firstOrNull()
+            val image = response.body()
                 ?: return Result.failure(IllegalArgumentException("No body: ${response.body()}"))
 
-            if (image.finishReason != StabilityAiFinishReason.SUCCESS) {
+            if (image.finishReason == StabilityAiFinishReason.CONTENT_FILTERED) {
                 return Result.failure(IllegalStateException("Couldn't generate image: ${image.finishReason}"))
             }
 
-            Result.success(GeneratedImage(base64 = image.base64))
+            Result.success(GeneratedImage(base64 = image.image))
         } else {
             Result.failure(IllegalArgumentException(response.errorBody()?.string()))
         }
