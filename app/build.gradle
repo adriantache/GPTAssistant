@@ -63,7 +63,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion "1.5.10"
+        kotlinCompilerExtensionVersion "1.5.14"
     }
     packagingOptions {
         resources {
@@ -73,18 +73,18 @@ android {
 }
 
 dependencies {
-    implementation "androidx.core:core-ktx:1.12.0"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"
-    implementation "androidx.activity:activity-compose:1.8.2"
+    implementation "androidx.core:core-ktx:1.13.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.8.0"
+    implementation "androidx.activity:activity-compose:1.9.0"
 
-    implementation platform("androidx.compose:compose-bom:2024.02.02")
+    implementation platform("androidx.compose:compose-bom:2024.05.00")
     implementation "androidx.compose.ui:ui"
     implementation "androidx.compose.ui:ui-tooling-preview"
     implementation "androidx.compose.material3:material3:1.2.1"
-    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.7.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.8.0"
 
     testImplementation "junit:junit:4.13.2"
-    androidTestImplementation platform('androidx.compose:compose-bom:2024.02.02')
+    androidTestImplementation platform('androidx.compose:compose-bom:2024.05.00')
     androidTestImplementation "androidx.test.ext:junit:1.1.5"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4"
@@ -99,14 +99,14 @@ dependencies {
 
     implementation "com.google.accompanist:accompanist-permissions:0.33.0-alpha"
 
-    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
     implementation 'com.google.firebase:firebase-common'
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")
 
-    implementation("com.google.android.gms:play-services-auth:21.0.0")
+    implementation("com.google.android.gms:play-services-auth:21.1.1")
 
     implementation "io.insert-koin:koin-android:3.3.3"
     implementation "io.insert-koin:koin-androidx-compose:3.4.2"
@@ -114,7 +114,7 @@ dependencies {
     implementation "androidx.glance:glance-appwidget:1.0.0"
     implementation "androidx.glance:glance-material3:1.0.0"
 
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.3")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.7")
 
     implementation("org.jetbrains:markdown:0.5.0")
     implementation("io.coil-kt:coil-compose:2.5.0")
