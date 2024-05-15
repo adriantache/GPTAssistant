@@ -2,9 +2,8 @@ package com.adriantache.gptassistant.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.Lifecycle.State.RESUMED
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adriantache.gptassistant.domain.AssistantUseCases
 import com.adriantache.gptassistant.domain.model.AssistantState
 import com.adriantache.gptassistant.presentation.view.OpenAiApiKeyInputDialog
@@ -16,7 +15,7 @@ import org.koin.androidx.compose.get
 fun AssistantStateMachine(
     stateUseCases: AssistantUseCases = get(),
 ) {
-    val state by stateUseCases.states.collectAsStateWithLifecycle(minActiveState = RESUMED)
+    val state by stateUseCases.states.collectAsState()
 
     LaunchedEffect(state) {
         when (val localState = state) {
