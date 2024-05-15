@@ -8,9 +8,10 @@ import kotlinx.serialization.Serializable
 private const val MODEL_GPT_3 = "gpt-3.5-turbo"
 private const val MODEL_GPT_4 = "gpt-4"
 private const val MODEL_GPT_4_TURBO = "gpt-4-turbo-preview"
+private const val MODEL_GPT_4_O = "gpt-4o"
 
 @Serializable
 data class OpenAiRequest(
     val messages: List<ChatMessage>,
-    val model: String = MODEL_GPT_4_TURBO,
+    val model: String = MODEL_GPT_4_O,
 )
